@@ -26,15 +26,28 @@ I18N_DIR = Path(__file__).resolve().parent.parent / "i18n"
 PLACEHOLDER = re.compile(r"\{(\w+)\}")
 
 # Keys that must be reviewed by a fluent speaker before the demo is recorded (blueprint 6A.4).
-CRITICAL_PREFIXES = ("gap.", "expl.")
+# Widened in PHASE 8 to cover every text that carries a claim or a limit (a mistranslation that drops
+# "simulated", "indicative", "not a prediction" or "placeholder" breaks the claims policy, blueprint 0.5).
+CRITICAL_PREFIXES = ("gap.", "expl.", "reason.", "iso.limit")
 CRITICAL_KEYS = (
     "banner.simulation",
     "note.indicative",
+    "note.indicative_metrics",
     "label.placeholder_weights",
     "result.unreachable",
     "scenario.mild",
     "scenario.moderate",
     "scenario.severe",
+    "kpi.not_routed",
+    "kpi.note_feasibility",
+    "iso.units_note",
+    "iso.excluded_baseline",
+    "metrics.note",
+    "export.intro",
+    "map.roads_note",
+    "route.audit_hint",
+    "chart.cut_off",
+    "state.planned_not_built",
 )
 
 log = logging.getLogger("floodpath.i18n")
