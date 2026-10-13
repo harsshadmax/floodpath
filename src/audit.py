@@ -93,8 +93,8 @@ def flood_layer_info(scenario: str, manifest: Dict[str, object], metrics: Option
         "feature_counts_in_zone": stats["feature_counts_in_zone"],
     }
     if scenario == "observed":
-        info["routed"] = False
-        info["note"] = "Union of all four components; shown on the map, not routed on."
+        info["routed"] = True
+        info["note"] = "Union of all four components (extreme upper bound): routed on, and it cuts off every facility."
     else:
         info["routed"] = True
         info["method"] = "seeded nested subset of street-level reports (stagnation points, GCC hotspots, crowd-sourced flooded segments)"
@@ -110,7 +110,8 @@ def build_audit(scenario: str, point: Dict[str, object], result: Optional[Dict[s
     summary = None
     if metrics is not None:
         summary = {k: v for k, v in metrics.items() if k not in ("origins",)}
-        summary["robustness"] = {k: v for k, v in metrics["robustness"].items() if k != "per_origin"}  # type: ignore[union-attr]
+        rob = metrics.get("robustness")
+        summary["robustness"] = None if rob is None else {k: v for k, v in rob.items() if k != "per_origin"}
     return {
         "generated_at": None,
         "app_version": APP_VERSION,

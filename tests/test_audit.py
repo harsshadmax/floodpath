@@ -29,7 +29,7 @@ def test_config_in_effect_is_complete_and_json_safe():
     d = doc()
     assert set(d["config"]) == set(CONFIG.__dataclass_fields__)
     json.dumps(d)  # serialisable
-    assert d["config"]["SCENARIO_FEATURE_SHARE"] == [["mild", 0.1], ["moderate", 0.2], ["severe", 0.35]]
+    assert d["config"]["SCENARIO_FEATURE_SHARE"] == [["mild", 0.08], ["moderate", 0.16], ["severe", 0.25]]
 
 
 def test_limits_include_four_standing_gaps_and_draft_status():
@@ -42,7 +42,7 @@ def test_metrics_summary_drops_per_origin_lists_and_observed_is_not_routed():
     d = doc()
     assert "origins" not in d["metrics"] and "per_origin" not in d["metrics"]["robustness"]
     obs = doc("observed", result=None, metrics=None)
-    assert obs["flood_layer"]["routed"] is False and obs["flood_layer"]["kind"] == "composite"
+    assert obs["flood_layer"]["routed"] is True and obs["flood_layer"]["kind"] == "composite"
     assert obs["result"] is None and obs["metrics"] is None
 
 

@@ -38,14 +38,7 @@ def main() -> None:
     points += [{"id": o.origin_id, "group": "origin", "lat": o.latitude, "lon": o.longitude, "node": int(o.node_id)}
                for o in origins.itertuples()]
 
-    zone = flood.zone_polygon()
-    zone_m = gpd.GeoSeries([zone], crs=CONFIG.CRS_GEO).to_crs(CONFIG.CRS_METRIC).iloc[0]
-    components = {}
-    for name in flood.SOURCES:
-        g = flood.load_source(name)
-        components[name] = g[g.intersects(zone)]
-    features = flood.street_features(components)
-    ranks = flood.draw_ranks(len(features), CONFIG.RANDOM_SEED)
+    _, _, _, geoms = flood.routed_scenarios()
 
     out = {
         "generated_on": date.today().isoformat(),
@@ -55,8 +48,7 @@ def main() -> None:
         "points": [{k: v for k, v in p.items() if k != "node"} | {"label": "simulated"} for p in points],
         "scenarios": {},
     }
-    for scenario, share in CONFIG.SCENARIO_FEATURE_SHARE:
-        geom = flood.subset_geometry(features, ranks, share, zone_m)
+    for scenario, geom in geoms.items():
         table = impact.classify_edges(G, geom)
         G2 = impact.apply_flood(G, table)
         classes = impact.class_lookup(table)
@@ -76,7 +68,7 @@ def main() -> None:
                 "path": route.path_coords(G2, r.path_nodes),
                 "baseline_path": route.path_coords(G, r.baseline_path_nodes),
                 "blocked_segments": route.edge_coords(G, r.baseline_blocked_edges),
-                "explain": {lang: explain.explain(result, scenario, "simulated", "D1 (OpenCity, GCC)", facilities, lang)
+                "explain": {lang: explain.explain(result, scenario, "composite" if scenario == "observed" else "simulated", "D1 (OpenCity, GCC)", facilities, lang)
                             for lang in LANGS},
             }
         out["scenarios"][scenario] = per_point

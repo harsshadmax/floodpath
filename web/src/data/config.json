@@ -32,9 +32,9 @@
     {
       "name": "SCENARIO_FEATURE_SHARE",
       "value": {
-        "mild": 0.1,
-        "moderate": 0.2,
-        "severe": 0.35
+        "mild": 0.08,
+        "moderate": 0.16,
+        "severe": 0.25
       }
     },
     {

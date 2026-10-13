@@ -10,7 +10,7 @@ import MetricsTable from "./MetricsTable";
 import ExportPage from "./ExportPage";
 import { CoverageByScenario, EdgeClasses, ReachByFacility, Spark, TopOrigins, type MetricsFile } from "./Charts";
 import { DashboardIcon, DownloadIcon, InfoIcon, LayersIcon, RouteIcon, TableIcon } from "./icons";
-import { Banner, Card, DatePill, KpiCard, Pills, Placeholder, Rail, type RailItem } from "./ui";
+import { Banner, Card, KpiCard, Pills, Placeholder, Rail, type RailItem } from "./ui";
 
 // Leaflet touches `window`, so the map loads in the browser only.
 const RouteExplorer = dynamic(() => import("./RouteExplorer"), { ssr: false, loading: () => <div className="fp-placeholder" /> });
@@ -24,7 +24,10 @@ const SCENARIOS = ["observed", "mild", "moderate", "severe"] as const;
 type Scenario = (typeof SCENARIOS)[number];
 const FOCUS = ["reachability", "coverage", "time"] as const;
 type Focus = (typeof FOCUS)[number];
-const SIM_ORDER = ["mild", "moderate", "severe"] as const;
+const SIM_ORDER = ["observed", "mild", "moderate", "severe"] as const;
+// the header focus toggle highlights the matching KPI card and chart card
+const FOCUS_KPI: Record<Focus, string> = { reachability: "kpi.reachability", coverage: "kpi.coverage", time: "kpi.time_increase" };
+const FOCUS_CARD: Record<Focus, string> = { reachability: "card.reach_by_facility", coverage: "card.coverage_by_scenario", time: "card.top_origins" };
 const GAP_KEYS = ["gap.facility_list", "gap.ambulance", "gap.peak", "gap.roads"];
 
 export default function Dashboard() {
@@ -66,10 +69,10 @@ export default function Dashboard() {
 
   const T = (key: string, params?: Record<string, string | number>) => t(lang, key, params);
   const m = metrics && metrics !== "missing" ? metrics : null;
-  const sm = m && scenario !== "observed" ? m.scenarios[scenario] : null;
+  const sm = m ? m.scenarios[scenario] : null;
   const sparkOf = (pick: (x: MetricsFile["scenarios"][string]) => number | null) =>
-    m ? <Spark values={SIM_ORDER.map((s) => pick(m.scenarios[s]))} selected={SIM_ORDER.indexOf(scenario as (typeof SIM_ORDER)[number])} /> : undefined;
-  const offNote = scenario === "observed" ? T("kpi.not_routed") : metrics === "missing" ? T("state.metrics_missing") : T("state.not_built");
+    m ? <Spark values={SIM_ORDER.map((s) => pick(m.scenarios[s]))} selected={SIM_ORDER.indexOf(scenario)} /> : undefined;
+  const offNote = metrics === "missing" ? T("state.metrics_missing") : T("state.not_built");
   const kpis = [
     {
       key: "kpi.time_increase",
@@ -101,10 +104,10 @@ export default function Dashboard() {
     },
     {
       key: "kpi.robustness",
-      value: sm ? fmtPct(sm.robustness.overall) : null,
-      note: sm ? T("kpi.note_robust", { pct: fmtPct(sm.robustness.share_changed_at_least_once), runs: sm.robustness.runs }) : undefined,
-      none: offNote,
-      spark: sparkOf((x) => x.robustness.overall),
+      value: sm && sm.robustness ? fmtPct(sm.robustness.overall) : null,
+      note: sm && sm.robustness ? T("kpi.note_robust", { pct: fmtPct(sm.robustness.share_changed_at_least_once), runs: sm.robustness.runs }) : undefined,
+      none: sm ? T("kpi.note_robust_na") : offNote,
+      spark: sparkOf((x) => x.robustness?.overall ?? null),
     },
   ];
   const kind = scenario === "observed" ? T("badge.composite") : T("badge.simulated");
@@ -142,7 +145,6 @@ export default function Dashboard() {
                 onChange={changeLang}
                 options={LANGS.map((l) => ({ value: l, label: LANG_LABELS[l] }))}
               />
-              <DatePill text={T("event.chennai_2015")} />
             </div>
             <Pills
               variant="dark"
@@ -172,13 +174,13 @@ export default function Dashboard() {
             <p className="fp-metrics-note">{T("note.indicative_metrics")}</p>
             <div className="fp-grid-kpi">
               {kpis.map((k) => (
-                <KpiCard key={k.key} label={T(k.key)} value={k.value} note={k.note} notBuilt={k.none} spark={k.spark} />
+                <KpiCard key={k.key} label={T(k.key)} value={k.value} note={k.note} notBuilt={k.none} spark={k.spark} highlight={FOCUS_KPI[focus] === k.key} />
               ))}
             </div>
             <div className="fp-grid-cards">
               {["card.map", "card.coverage_by_scenario", "card.isolation_top", "card.edge_classes", "card.reach_by_facility", "card.top_origins"].map(
                 (key) => (
-                  <Card key={key} title={T(key)} caption={caption}>
+                  <Card key={key} title={T(key)} caption={caption} highlight={FOCUS_CARD[focus] === key}>
                     {key === "card.map" ? (
                       <RouteMap scenario={scenario} lang={lang} />
                     ) : key === "card.isolation_top" ? (
@@ -192,7 +194,7 @@ export default function Dashboard() {
                     ) : key === "card.top_origins" && sm ? (
                       <TopOrigins lang={lang} m={sm} />
                     ) : (
-                      <Placeholder text={key === "card.coverage_by_scenario" ? offNote : scenario === "observed" ? T("kpi.not_routed") : offNote} />
+                      <Placeholder text={offNote} />
                     )}
                   </Card>
                 ),

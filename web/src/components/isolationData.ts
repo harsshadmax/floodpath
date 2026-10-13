@@ -29,7 +29,7 @@ export function useIsolation() {
   return { data, failed };
 }
 
-export function isolationCsv(data: IsoFile, lang: string, scenarios: readonly string[] = SIM): string {
+export function isolationCsv(data: IsoFile, lang: string, scenarios: readonly string[] = ["observed", ...SIM]): string {
   const rows = scenarios.flatMap((s) => data.scenarios[s].units.map((u) => ({ ui_language: lang, scenario: s, ...u })));
   return toCsv(CSV_COLUMNS, rows);
 }

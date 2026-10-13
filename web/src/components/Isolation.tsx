@@ -19,7 +19,6 @@ export function IsolationTop({ scenario, lang }: { scenario: string; lang: Lang 
   const { data, failed } = useIsolation();
   if (failed) return <div className="fp-placeholder">{T("state.not_built")}</div>;
   if (!data) return <div className="fp-placeholder">{T("map.loading")}</div>;
-  if (scenario === "observed") return <div className="fp-placeholder">{T("kpi.not_routed")}</div>;
   const rows = data.scenarios[scenario].units.slice(0, 5);
   return (
     <div className="fp-chart">
@@ -54,7 +53,7 @@ export default function IsolationPage({ scenario, lang }: { scenario: string; la
   const { data, failed } = useIsolation();
   const [sort, setSort] = useState<{ key: SortKey; asc: boolean }>({ key: "rank", asc: true });
 
-  const units = useMemo(() => (data && scenario !== "observed" ? data.scenarios[scenario].units : []), [data, scenario]);
+  const units = useMemo(() => (data ? data.scenarios[scenario].units : []), [data, scenario]);
   const byId = useMemo(() => new Map(units.map((u) => [u.unit_id, u])), [units]);
   const sorted = useMemo(() => {
     const dir = sort.asc ? 1 : -1;
@@ -67,7 +66,6 @@ export default function IsolationPage({ scenario, lang }: { scenario: string; la
 
   if (failed) return <div className="fp-placeholder">{T("state.not_built")}</div>;
   if (!data) return <div className="fp-placeholder">{T("map.loading")}</div>;
-  if (scenario === "observed") return <div className="fp-placeholder">{T("kpi.not_routed")}</div>;
 
   const scores = units.map((u) => u.priority_score).sort((a, b) => a - b);
   const shade = (score: number) => {

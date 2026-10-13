@@ -26,14 +26,7 @@ def main() -> None:
     G = roads.load_graph()
     suitable, _ = fac.suitable_facilities(fac.load_facilities(), G)
     nodes = [int(n) for n in suitable["node_id"]]
-    zone = flood.zone_polygon()
-    zone_m = gpd.GeoSeries([zone], crs=CONFIG.CRS_GEO).to_crs(CONFIG.CRS_METRIC).iloc[0]
-    components = {}
-    for name in flood.SOURCES:
-        g = flood.load_source(name)
-        components[name] = g[g.intersects(zone)]
-    features = flood.street_features(components)
-    ranks = flood.draw_ranks(len(features), CONFIG.RANDOM_SEED)
+    _, _, _, geoms = flood.routed_scenarios()
 
     # ward units with Census 2011 populations when the ward join works, else the 1 km grid with placeholders
     unit_kwargs, zone_wards = {}, None
@@ -54,8 +47,7 @@ def main() -> None:
            "top_k": CONFIG.ISOLATION_TOP_K,
            "population_basis": "ward_census_2011" if unit_kwargs else "placeholder", "scenarios": {}}
     unit_ids = set()
-    for scenario, share in CONFIG.SCENARIO_FEATURE_SHARE:
-        geom = flood.subset_geometry(features, ranks, share, zone_m)
+    for scenario, geom in geoms.items():
         G2 = impact.apply_flood(G, impact.classify_edges(G, geom))
         df, warns = isolation.compute(G, G2, nodes, **unit_kwargs)
         df.to_csv(PROCESSED / f"isolation_{scenario}.csv", index=False)

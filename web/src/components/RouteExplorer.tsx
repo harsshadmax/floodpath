@@ -57,7 +57,7 @@ export default function RouteExplorer({ scenario, lang }: { scenario: string; la
     getJson<RoutesFile>("/data/routes.json").then(setData).catch(() => setFailed(true));
   }, []);
   useEffect(() => {
-    if (flood[scenario] || scenario === "observed") return;
+    if (flood[scenario]) return;
     getJson<GeoJsonObject>(`/data/flood_${scenario}.geojson`)
       .then((g) => setFlood((prev) => ({ ...prev, [scenario]: g })))
       .catch(() => undefined);
@@ -82,7 +82,7 @@ export default function RouteExplorer({ scenario, lang }: { scenario: string; la
     </div>
   );
 
-  const res = data && scenario !== "observed" ? data.scenarios[scenario]?.[pointId] : undefined;
+  const res = data ? data.scenarios[scenario]?.[pointId] : undefined;
   const point = data?.points.find((p) => p.id === pointId);
   const facName = (id: string | null) => data?.facilities.find((f) => f.id === id)?.name ?? "";
 
@@ -103,13 +103,6 @@ export default function RouteExplorer({ scenario, lang }: { scenario: string; la
 
   if (failed) return <div className="fp-placeholder">{T("state.routes_missing")}</div>;
   if (!data) return <div className="fp-placeholder">{T("map.loading")}</div>;
-  if (scenario === "observed")
-    return (
-      <div>
-        <div className="fp-placeholder">{T("kpi.not_routed")}</div>
-        {auditButton}
-      </div>
-    );
 
   const diff = res && res.reachable && res.time_min !== null && res.baseline_time_min !== null ? res.time_min - res.baseline_time_min : null;
   const mins = (x: number | null) => (x === null ? "—" : T("route.minutes_value", { n: x.toFixed(1) }));

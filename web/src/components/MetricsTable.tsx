@@ -6,7 +6,7 @@ import { fmtPct, t, type Lang } from "@/lib/i18n";
 import { getJson, toCsv } from "@/lib/download";
 import type { MetricsFile } from "./Charts";
 
-const SIM = ["mild", "moderate", "severe"] as const;
+const SIM = ["observed", "mild", "moderate", "severe"] as const;
 type Row = { key: string; label: string; english: string; values: (string | null)[]; raw: (number | string | null)[] };
 
 export function useMetrics() {
@@ -52,19 +52,19 @@ export function metricRows(data: MetricsFile, lang: Lang): Row[] {
     { key: "m4_coverage_difference", label: T("metrics.m4_diff"), english: "M4 coverage difference (share, flood-aware minus conventional)",
       raw: SIM.map((s) => S[s].m4_coverage_difference), values: SIM.map((s) => (S[s].m4_coverage_difference * 100).toFixed(1)) },
     { key: "m5_robustness", label: T("metrics.m5_overall"), english: "M5 routing robustness (share)",
-      raw: SIM.map((s) => S[s].robustness.overall), values: SIM.map((s) => pct(S[s].robustness.overall)) },
+      raw: SIM.map((s) => S[s].robustness?.overall ?? null), values: SIM.map((s) => { const r = S[s].robustness; return r ? pct(r.overall) : null; }) },
     { key: "m5_changed", label: T("metrics.m5_changed"), english: "M5 origins whose facility changed in at least one run (share)",
-      raw: SIM.map((s) => S[s].robustness.share_changed_at_least_once), values: SIM.map((s) => pct(S[s].robustness.share_changed_at_least_once)) },
+      raw: SIM.map((s) => S[s].robustness?.share_changed_at_least_once ?? null), values: SIM.map((s) => { const r = S[s].robustness; return r ? pct(r.share_changed_at_least_once) : null; }) },
   ];
   return rows;
 }
 
 export function metricsCsv(data: MetricsFile, lang: string): string {
   const rows = metricRows(data, "en").map((r) => ({
-    ui_language: lang, metric_key: r.key, metric: r.english, mild: r.raw[0], moderate: r.raw[1], severe: r.raw[2],
-    kind: "simulated", note: "indicative simulation; not a prediction; coverage is a share of sample points",
+    ui_language: lang, metric_key: r.key, metric: r.english, observed: r.raw[0], mild: r.raw[1], moderate: r.raw[2], severe: r.raw[3],
+    kind: "observed composite and simulated", note: "indicative simulation; not a prediction; coverage is a share of sample points",
   }));
-  return toCsv(["ui_language", "metric_key", "metric", "mild", "moderate", "severe", "kind", "note"], rows);
+  return toCsv(["ui_language", "metric_key", "metric", "observed", "mild", "moderate", "severe", "kind", "note"], rows);
 }
 
 export default function MetricsTable({ scenario, lang }: { scenario: string; lang: Lang }) {
@@ -96,7 +96,7 @@ export default function MetricsTable({ scenario, lang }: { scenario: string; lan
           ))}
         </tbody>
       </table>
-      <p className="fp-chart-note">{T(data.population_basis === "ward_census_2011" ? "metrics.note_weighted" : "metrics.note", { n: data.n_origins, runs: data.scenarios.mild.robustness.runs })}</p>
+      <p className="fp-chart-note">{T(data.population_basis === "ward_census_2011" ? "metrics.note_weighted" : "metrics.note", { n: data.n_origins, runs: (data.scenarios.mild.robustness?.runs ?? 0) })}</p>
     </div>
   );
 }

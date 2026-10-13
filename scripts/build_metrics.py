@@ -31,14 +31,7 @@ def main() -> dict:
     df = fac.load_facilities()
     suitable, excluded = fac.suitable_facilities(df, G)
     origins = pd.read_csv(PROCESSED / "origins.csv")
-    zone = flood.zone_polygon()
-    zone_m = gpd.GeoSeries([zone], crs=CONFIG.CRS_GEO).to_crs(CONFIG.CRS_METRIC).iloc[0]
-    components = {}
-    for name in flood.SOURCES:
-        g = flood.load_source(name)
-        components[name] = g[g.intersects(zone)]
-    features = flood.street_features(components)
-    ranks = flood.draw_ranks(len(features), CONFIG.RANDOM_SEED)
+    features, ranks, zone_m, geoms = flood.routed_scenarios()
 
     basis = origins["population_basis"].iloc[0] if "population_basis" in origins else "placeholder"
     out = {"generated_on": date.today().isoformat(), "population_basis": basis, "n_origins": len(origins), "n_reports": len(features),
@@ -50,11 +43,11 @@ def main() -> dict:
     for o in origins.itertuples():
         out["origins"].append({"id": o.origin_id, "lat": round(o.latitude, 5), "lon": round(o.longitude, 5)})
 
-    for name, share in CONFIG.SCENARIO_FEATURE_SHARE:
-        geom = flood.subset_geometry(features, ranks, share, zone_m)
+    shares = dict(CONFIG.SCENARIO_FEATURE_SHARE)
+    for name, geom in geoms.items():
         table, results = metrics.route_all(G, geom, origins, suitable)
         m = metrics.scenario_metrics(results, origins, suitable)
-        m["share_of_reports"] = share
+        m["share_of_reports"] = shares.get(name)  # None for the observed composite
         m["edge_classes"] = impact.class_counts(table)
         m["origins"] = [
             {"id": o.origin_id, "facility": r.facility_id, "reachable": r.reachable,
@@ -64,9 +57,10 @@ def main() -> dict:
             for o, r in zip(origins.itertuples(), results)
         ]
         t1 = time.time()
-        m["robustness"] = metrics.robustness(G, features, ranks, zone_m, results, origins, suitable)
-        print(f"{name}: {json.dumps({k: v for k, v in m.items() if k.startswith('m')}, default=str)[:400]}")
-        print(f"   robustness {m['robustness']['overall']} in {time.time() - t1:.0f}s", flush=True)
+        # robustness varies the share of reports kept, which is not defined for the fixed observed composite
+        m["robustness"] = None if name == "observed" else metrics.robustness(G, features, ranks, zone_m, results, origins, suitable)
+        rob = m["robustness"]
+        print(f"{name}: reach {m['m3_reach_any']} cov {m['m4_coverage_flood_aware']} time {m['m1_time_increase_min']['mean']} rob {None if rob is None else rob['overall']} ({time.time() - t1:.0f}s)", flush=True)
         out["scenarios"][name] = m
 
     text = json.dumps(out, indent=1)

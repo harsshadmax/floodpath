@@ -67,9 +67,9 @@ export function Placeholder({ text }: { text: string }) {
   return <div className="fp-placeholder">{text}</div>;
 }
 
-export function Card({ title, caption, children }: { title: string; caption?: string; children: ReactNode }) {
+export function Card({ title, caption, children, highlight }: { title: string; caption?: string; children: ReactNode; highlight?: boolean }) {
   return (
-    <section className="fp-card">
+    <section className={highlight ? "fp-card fp-focus" : "fp-card"}>
       <h3 className="fp-card-title">{title}</h3>
       {caption ? <p className="fp-card-caption">{caption}</p> : null}
       {children}
@@ -95,6 +95,7 @@ export function KpiCard({
   note,
   notBuilt,
   spark,
+  highlight,
 }: {
   label: string;
   value: string | null;
@@ -103,9 +104,10 @@ export function KpiCard({
   note?: string;
   spark?: ReactNode;
   notBuilt: string;
+  highlight?: boolean;
 }) {
   return (
-    <div className="fp-card">
+    <div className={highlight ? "fp-card fp-focus" : "fp-card"}>
       <div className="fp-kpi-top">
         <span className="fp-kpi-label fp-caps">{label}</span>
         {delta ? <span className={`fp-kpi-delta ${deltaTone ?? ""}`}>{delta}</span> : null}

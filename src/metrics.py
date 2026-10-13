@@ -41,8 +41,10 @@ def scenario_metrics(results: List[route.RouteResult], origins: pd.DataFrame, fa
                      cfg: Config = CONFIG) -> Dict[str, object]:
     """M1 to M4 for one scenario (M5 comes from robustness())."""
     w = origins["population_weight"].to_numpy(dtype=float)
-    both = [r for r in results if r.reachable and r.baseline_drivable]
-    m1 = _stats([r.time_min - r.baseline_time_min for r in both])  # type: ignore[operator]
+    # Travel-time increase: flood-aware time minus the unflooded shortest time, for every origin that still
+    # reaches a facility (this includes origins whose conventional route is blocked).
+    reached = [r for r in results if r.reachable]
+    m1 = _stats([r.time_min - r.baseline_time_min for r in reached])  # type: ignore[operator]
     drivable = np.array([r.baseline_drivable for r in results])
     has_fa = np.array([r.reachable for r in results])
     per_fac = {}

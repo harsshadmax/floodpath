@@ -46,7 +46,7 @@ def test_t10_travel_time_increase_is_difference_of_routes():
     assert res[0].reachable
     m = metrics.scenario_metrics(res, org, fac)
     assert m["m1_time_increase_min"]["mean"] == pytest.approx(res[0].time_min - base[0].time_min, abs=0.01)
-    assert m["m1_time_increase_min"]["n"] == (1 if res[0].baseline_drivable else 0)
+    assert m["m1_time_increase_min"]["n"] == 1
 
 
 def test_t11_coverage_and_reachability_weights():

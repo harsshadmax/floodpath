@@ -79,3 +79,9 @@ Two files were downloaded with the user's approval into `data/raw/wards/` (not c
 - **Coverage now weights the 20 sample origins by ward population.** Each origin gets its ward's in-zone population, shared equally by the origins in that ward (here every origin is in a different ward). Coverage within 30 minutes, flood-aware (conventional): mild 96.0% (25.7%), moderate 80.9% (0.0%), severe 0.0% (0.0%). This is a population-weighted share of 20 sample points, not of the city: wards with no sample origin contribute nothing.
 - **Fallback kept:** if the files are missing or fewer than 90% of polygons match, every script falls back to the 1 km grid and placeholder weights, and the interface text changes accordingly.
 - **Attribution:** ward boundaries credit DataMeet / Transparent Chennai (CC BY-SA 2.5 India); populations credit OpenCity / Census of India 2011. The Data and limits page lists both.
+
+## PHASE 10 changes (supersede the notes above where they differ)
+- **Scenario shares are now 8%, 16% and 25% of street-level reports** (a sweep showed the road network collapses between 25% and 30%). The observed composite is routed on as the extreme upper bound: every facility is cut off, every ward is 100% isolated, robustness is not defined for it.
+- **Travel-time increase** is flood-aware time minus the unflooded shortest time for every origin that still reaches a facility (it no longer requires a drivable conventional route).
+- Results (observed / mild / moderate / severe): facilities reached 0 / 95 / 95 / 85%; coverage within 30 min 0 / 96 / 96 / 69%; mean extra time none / 0.7 / 4.0 / 11.2 min. Still arbitrary sensitivity settings, not predictions.
+- The "(simulated)" suffix was removed from scenario names and the event pill was removed; the simulation banner and "Simulated" caption tags stay.

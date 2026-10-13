@@ -48,16 +48,17 @@ class Config:
     # reach any facility, in every buffered scenario. So mild, moderate and severe are now seeded SUBSETS of the
     # street-level flood reports (GCC stagnation points, GCC hotspots, crowd-sourced flooded segments), nested
     # so mild is inside moderate is inside severe. The shares are arbitrary sensitivity settings, not physical
-    # models, and not predictions. The observed composite is shown on the map but is not routed on.
+    # models, and not predictions. The observed composite is routed on as the extreme upper bound. Shares were re-set
+    # from 10/20/35% to 8/16/25% after a sweep showed the network collapses between 25% and 30% of reports.
     SCENARIO_FEATURE_SHARE: Tuple[Tuple[str, float], ...] = (
-        ("mild", 0.10),
-        ("moderate", 0.20),
-        ("severe", 0.35),
+        ("mild", 0.08),
+        ("moderate", 0.16),
+        ("severe", 0.25),
     )
 
     # Robustness (A-07)
     ROBUSTNESS_RUNS: int = 50
-    ROBUSTNESS_SHARE_RANGE: Tuple[float, float] = (0.05, 0.40)  # share of street-level reports kept in each run
+    ROBUSTNESS_SHARE_RANGE: Tuple[float, float] = (0.05, 0.30)  # share of street-level reports kept in each run
 
     # Metrics (A-06: an analysis parameter, not an official standard)
     COVERAGE_THRESHOLD_MIN: float = 30.0

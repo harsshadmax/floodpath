@@ -133,6 +133,22 @@ def subset_geometry(features: List[BaseGeometry], ranks: np.ndarray, share: floa
     return unary_union(kept).intersection(zone_m)
 
 
+def routed_scenarios(cfg: Config = CONFIG):
+    """Report features, their ranks, the zone (metric CRS) and metric-CRS geometries for the observed composite
+    plus the three subset scenarios. Needs the build_phase2 output."""
+    zone = zone_polygon(cfg)
+    zone_m = gpd.GeoSeries([zone], crs=cfg.CRS_GEO).to_crs(cfg.CRS_METRIC).iloc[0]
+    components = {n: load_source(n) for n in SOURCES}
+    components = {n: g[g.intersects(zone)] for n, g in components.items()}
+    feats = street_features(components, cfg)
+    ranks = draw_ranks(len(feats), cfg.RANDOM_SEED)
+    observed = unary_union(list(gpd.read_file(PROCESSED / "flood_observed.geojson").to_crs(cfg.CRS_METRIC).geometry))
+    geoms = {"observed": observed}
+    for name, share in cfg.SCENARIO_FEATURE_SHARE:
+        geoms[name] = subset_geometry(feats, ranks, share, zone_m)
+    return feats, ranks, zone_m, geoms
+
+
 def build_scenarios(
     components: Dict[str, gpd.GeoDataFrame], composite: BaseGeometry, zone_geo: Polygon, cfg: Config = CONFIG
 ) -> Dict[str, BaseGeometry]:

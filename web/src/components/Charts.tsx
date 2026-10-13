@@ -14,7 +14,7 @@ export type Origin = {
 };
 export type ScenarioMetrics = {
   n_origins: number;
-  share_of_reports: number;
+  share_of_reports: number | null;
   m1_time_increase_min: { mean: number | null; median: number | null; max: number | null; n: number };
   m2_false_route_rate: number;
   m2_flood_aware_route_share: number;
@@ -26,7 +26,7 @@ export type ScenarioMetrics = {
   coverage_threshold_min: number;
   edge_classes: { passable: number; at_risk: number; blocked: number };
   origins: Origin[];
-  robustness: { runs: number; overall: number; share_changed_at_least_once: number };
+  robustness: { runs: number; overall: number; share_changed_at_least_once: number } | null;
 };
 export type MetricsFile = {
   population_basis?: string;
@@ -35,7 +35,7 @@ export type MetricsFile = {
   n_origins: number;
 };
 
-const SIM = ["mild", "moderate", "severe"] as const;
+const SIM = ["observed", "mild", "moderate", "severe"] as const;
 
 function Bar({ label, value, color, text }: { label: string; value: number; color: string; text?: string }) {
   return (
