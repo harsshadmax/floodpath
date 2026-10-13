@@ -21,7 +21,7 @@ payload = {
         {"name": "AT_RISK_TIME_MULTIPLIER", "value": CONFIG.AT_RISK_TIME_MULTIPLIER},
         {"name": "POINT_BUFFER_M", "value": CONFIG.POINT_BUFFER_M},
         {"name": "LINE_BUFFER_M", "value": CONFIG.LINE_BUFFER_M},
-        {"name": "SCENARIO_BUFFER_M", "value": dict(CONFIG.SCENARIO_BUFFER_M)},
+        {"name": "SCENARIO_FEATURE_SHARE", "value": dict(CONFIG.SCENARIO_FEATURE_SHARE)},
         {"name": "COVERAGE_THRESHOLD_MIN", "value": CONFIG.COVERAGE_THRESHOLD_MIN},
         {"name": "N_ORIGINS", "value": CONFIG.N_ORIGINS},
         {"name": "ROBUSTNESS_RUNS", "value": CONFIG.ROBUSTNESS_RUNS},

@@ -35,3 +35,7 @@ One entry per preview checkpoint (blueprint Section 14.12). Screenshots are take
 - **Checks:** `tsc --noEmit`, `npm run lint` and `npm run build` pass; Tamil and Hindi render without missing-glyph boxes; Tamil labels wrap and the header re-flows; 35 Python tests pass (dictionary and config sync with the web copies included).
 - **Known limits:** the Hindi page was looked at in a small screenshot; Route explorer is a placeholder; the Next.js dev indicator shows in the corner in development only; fonts need an internet download once.
 - **User decision:** pending (commit of PHASE 1, study zone, blend style).
+
+## 2026-10-13: PHASE 3 (no new screenshot; the dashboard UI is unchanged except the map now shows the redesigned scenario layers)
+- **Real:** edge classification, flood-modified graph, routing with unreachable handling, facilities and simulated starts, 61 passing tests.
+- **User decision:** option 1 (seeded subset scenarios) after the buffered scenarios isolated every facility.

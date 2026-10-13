@@ -43,19 +43,21 @@ class Config:
     POINT_BUFFER_M: float = 75.0
     # The crowd-sourced layer is LineStrings (flooded street segments), not points (found in PHASE 1).
     LINE_BUFFER_M: float = 25.0  # A-22: roughly a road width plus margin
-    # Recalibrated in PHASE 2 (scripts/calibrate_scenarios.py). The blueprint's first guess (-100, 0, +150 m)
-    # gave mild = 2% and severe = 100% of the zone because the observed composite already covers 59% of it.
-    # With these values the simulated scenarios cover about 40%, 70% and 84% of the zone (observed: 59%).
-    # They are arbitrary sensitivity settings chosen so the scenarios differ usefully, not physical models.
-    SCENARIO_BUFFER_M: Tuple[Tuple[str, float], ...] = (
-        ("mild", -15.0),
-        ("moderate", 10.0),
-        ("severe", 30.0),
+    # Scenario design changed in PHASE 3 (user decision, option 1). Buffering the composite (PHASE 2) made the
+    # road network collapse: the observed composite blocks about 71% of road length and no sample origin can
+    # reach any facility, in every buffered scenario. So mild, moderate and severe are now seeded SUBSETS of the
+    # street-level flood reports (GCC stagnation points, GCC hotspots, crowd-sourced flooded segments), nested
+    # so mild is inside moderate is inside severe. The shares are arbitrary sensitivity settings, not physical
+    # models, and not predictions. The observed composite is shown on the map but is not routed on.
+    SCENARIO_FEATURE_SHARE: Tuple[Tuple[str, float], ...] = (
+        ("mild", 0.10),
+        ("moderate", 0.20),
+        ("severe", 0.35),
     )
 
     # Robustness (A-07)
     ROBUSTNESS_RUNS: int = 50
-    ROBUSTNESS_BUFFER_RANGE_M: Tuple[float, float] = (-20.0, 30.0)  # recalibrated with the scenarios (about 0.6x to 1.4x of observed)
+    ROBUSTNESS_SHARE_RANGE: Tuple[float, float] = (0.05, 0.40)  # share of street-level reports kept in each run
 
     # Metrics (A-06: an analysis parameter, not an official standard)
     COVERAGE_THRESHOLD_MIN: float = 30.0
@@ -102,15 +104,15 @@ def validate_config(cfg: Config, require_study_area: bool = False) -> Config:
         raise ConfigError("AT_RISK_TIME_MULTIPLIER", "must be at least 1")
     if cfg.POINT_BUFFER_M <= 0 or cfg.LINE_BUFFER_M <= 0:
         raise ConfigError("POINT_BUFFER_M", "POINT_BUFFER_M and LINE_BUFFER_M must be positive")
-    names = [name for name, _ in cfg.SCENARIO_BUFFER_M]
+    names = [name for name, _ in cfg.SCENARIO_FEATURE_SHARE]
     if names != ["mild", "moderate", "severe"]:
-        raise ConfigError("SCENARIO_BUFFER_M", "must list mild, moderate, severe in that order")
-    buffers = [value for _, value in cfg.SCENARIO_BUFFER_M]
-    if not (buffers[0] <= buffers[1] <= buffers[2]):
-        raise ConfigError("SCENARIO_BUFFER_M", "buffers must not decrease from mild to severe")
-    low, high = cfg.ROBUSTNESS_BUFFER_RANGE_M
-    if low >= high:
-        raise ConfigError("ROBUSTNESS_BUFFER_RANGE_M", "lower bound must be below upper bound")
+        raise ConfigError("SCENARIO_FEATURE_SHARE", "must list mild, moderate, severe in that order")
+    shares = [value for _, value in cfg.SCENARIO_FEATURE_SHARE]
+    if not (0 < shares[0] <= shares[1] <= shares[2] <= 1):
+        raise ConfigError("SCENARIO_FEATURE_SHARE", "shares must be in (0, 1] and not decrease from mild to severe")
+    low, high = cfg.ROBUSTNESS_SHARE_RANGE
+    if not (0 < low < high <= 1):
+        raise ConfigError("ROBUSTNESS_SHARE_RANGE", "need 0 < lower < upper <= 1")
     if cfg.ROBUSTNESS_RUNS < 1:
         raise ConfigError("ROBUSTNESS_RUNS", "must be at least 1")
     if cfg.COVERAGE_THRESHOLD_MIN <= 0:

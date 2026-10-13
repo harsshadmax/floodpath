@@ -35,3 +35,13 @@ Central Chennai, bbox W 80.205, S 13.010, E 80.270, N 13.100 (about 70 km2). Ins
 
 ## Licence conflicts
 See `SOURCES.md`: OpenCity's dataset-level Public Domain tag versus its portal-wide CC BY-NC-SA 4.0 and ODbL statement.
+
+## PHASE 3 findings (2026-10-13): scenarios redesigned, routing built
+- **Buffered scenarios made the road network collapse.** With the observed composite, 71% of road length is classed blocked (22,010 of 30,403 edges), all three facilities are cut off, and none of the 20 sample origins can reach any facility. Single layers did the same: the NRSC inundation polygons alone block 41% of road length, the street-level reports 47%. Shrinking the composite does not help, because buffered lines are about 50 m wide and vanish (-100 m left 1.1 km2).
+- **Decision (user, option 1):** mild, moderate and severe are now seeded, nested subsets of the street-level flood reports (GCC stagnation points, GCC hotspots, crowd-sourced flooded segments): 10%, 20% and 35% of reports (`SCENARIO_FEATURE_SHARE`, seed 42). Areas: mild 3.2 km2, moderate 6.3 km2, severe 10.2 km2. The observed composite (41.6 km2) is still drawn on the map but is not routed on. These shares are arbitrary sensitivity settings, not physical models and not predictions. The NRSC inundation polygons are not used in the simulated scenarios.
+- **Edge classes (30,403 directed edges):** mild 26,926 passable / 1,383 at risk / 2,094 blocked; moderate 23,707 / 2,481 / 4,215; severe 19,931 / 3,687 / 6,785. The at-risk and blocked thresholds (10% and 50% of edge length flooded) and the 3x time multiplier are assumptions.
+- **Facilities:** only 3 of the 5 GCC emergency obstetric units fall on the road graph (Purasaiwalkam, Shenoy Nagar, Saidapet, snapped 24, 26 and 94 m); Thoraipakkam and Mugalivakkam are outside the zone and are excluded with the reason `OUTSIDE_ROAD_GRAPH_SNAP_TOO_FAR`. All are unverified. With only 3 facilities, one cut-off unit changes results sharply (in the severe subset, all 20 sample origins lose access; mild and moderate leave 19 of 20 with access).
+- **Sample origins:** 20 seeded nodes from the largest connected road component. All 20 fall within 300 m of the observed composite because the composite covers 59% of the zone, so the "flood-adjacent" stratification is trivially met and does not add a stricter test.
+- **Ambulance starts:** 6 seeded points, all labelled simulated (`data/ambulance_starts.csv`).
+- **Speed:** classifying 30,403 edges took 106 s against the whole flood polygon; cutting the polygon into 400 m grid pieces made it a few seconds.
+- **Not yet done:** metrics K1 to K5, robustness runs, explanation text, audit log, route explorer and the KPI cards are still to build.

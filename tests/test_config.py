@@ -31,7 +31,7 @@ def test_t16_at_risk_reversed_order_rejected():
         {"POINT_BUFFER_M": 0},
         {"COVERAGE_THRESHOLD_MIN": 0},
         {"ROBUSTNESS_RUNS": 0},
-        {"ROBUSTNESS_BUFFER_RANGE_M": (50.0, -50.0)},
+        {"ROBUSTNESS_SHARE_RANGE": (0.5, 0.1)},
         {"N_ORIGINS": 5, "MIN_ORIGINS": 10},
         {"MAX_SNAP_DISTANCE_M": -1},
         {"DEFAULT_LANGUAGE": "fr"},
@@ -42,16 +42,17 @@ def test_invalid_values_are_rejected(overrides):
         validate_config(replace(CONFIG, **overrides))
 
 
-def test_scenario_buffers_must_not_decrease():
-    bad = (("mild", 100.0), ("moderate", 0.0), ("severe", 150.0))
-    with pytest.raises(ConfigError):
-        validate_config(replace(CONFIG, SCENARIO_BUFFER_M=bad))
+def test_scenario_shares_must_not_decrease_or_exceed_one():
+    for bad in ((("mild", 0.5), ("moderate", 0.2), ("severe", 0.35)),
+                (("mild", 0.1), ("moderate", 0.2), ("severe", 1.5))):
+        with pytest.raises(ConfigError):
+            validate_config(replace(CONFIG, SCENARIO_FEATURE_SHARE=bad))
 
 
 def test_scenario_names_must_be_in_order():
-    bad = (("moderate", 0.0), ("mild", -100.0), ("severe", 150.0))
+    bad = (("moderate", 0.2), ("mild", 0.1), ("severe", 0.35))
     with pytest.raises(ConfigError):
-        validate_config(replace(CONFIG, SCENARIO_BUFFER_M=bad))
+        validate_config(replace(CONFIG, SCENARIO_FEATURE_SHARE=bad))
 
 
 def test_study_zone_is_set_and_valid():

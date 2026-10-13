@@ -52,7 +52,7 @@ def main(force_graph: bool = False) -> None:
         "assumptions": {
             "POINT_BUFFER_M": CONFIG.POINT_BUFFER_M,
             "LINE_BUFFER_M": CONFIG.LINE_BUFFER_M,
-            "SCENARIO_BUFFER_M": dict(CONFIG.SCENARIO_BUFFER_M),
+            "SCENARIO_FEATURE_SHARE": dict(CONFIG.SCENARIO_FEATURE_SHARE),
         },
     }
     (WEB_DATA / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")

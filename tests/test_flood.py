@@ -40,26 +40,48 @@ def test_unsupported_geometry_raises_data_shape_unexpected():
         flood.buffer_component(bad)
 
 
-def test_t06_scenario_areas_are_ordered():
-    composite, areas = flood.build_composite(components(), ZONE)
-    scen = flood.build_scenarios(composite, ZONE)
+def many_reports(n=300):
+    # a spread of street-level reports so seeded subsets of 10/20/35% are non-empty and distinguishable
+    pts = [Point(CX - 0.025 + 0.05 * (i % 20) / 20, CY - 0.03 + 0.06 * (i // 20) / 15) for i in range(n)]
+    comps = components()
+    comps["stagnation"] = gpd.GeoDataFrame(geometry=pts, crs="EPSG:4326")
+    return comps
+
+
+def test_t06_scenario_areas_are_ordered_and_nested():
+    comps = many_reports()
+    composite, areas = flood.build_composite(comps, ZONE)
+    scen = flood.build_scenarios(comps, composite, ZONE)
     assert set(scen) == set(flood.SCENARIO_ORDER)
-    # mild < observed < moderate < severe (buffers -15, +10, +30 m on a composite that has room to grow)
-    assert scen["severe"].area >= scen["moderate"].area >= scen["observed"].area >= scen["mild"].area > 0
-    assert scen["severe"].area > scen["observed"].area > scen["mild"].area
+    assert 0 < scen["mild"].area <= scen["moderate"].area <= scen["severe"].area
+    assert scen["mild"].area < scen["severe"].area
+    # nested: every scenario lies inside the next one and inside the observed composite
+    assert scen["mild"].difference(scen["moderate"].buffer(0.5)).is_empty
+    assert scen["moderate"].difference(scen["severe"].buffer(0.5)).is_empty
+    assert scen["severe"].difference(composite.buffer(0.5)).is_empty
     assert all(a > 0 for a in areas.values())
 
 
+def test_scenarios_are_reproducible_with_the_seed():
+    comps = many_reports()
+    composite, _ = flood.build_composite(comps, ZONE)
+    a = flood.build_scenarios(comps, composite, ZONE)
+    b = flood.build_scenarios(comps, composite, ZONE)
+    assert all(a[k].equals(b[k]) for k in a)
+
+
 def test_scenarios_stay_inside_the_zone():
-    composite, _ = flood.build_composite(components(), ZONE)
+    comps = many_reports()
+    composite, _ = flood.build_composite(comps, ZONE)
     zone_m = gpd.GeoSeries([ZONE], crs="EPSG:4326").to_crs(CONFIG.CRS_METRIC).iloc[0]
-    for geom in flood.build_scenarios(composite, ZONE).values():
+    for geom in flood.build_scenarios(comps, composite, ZONE).values():
         assert geom.difference(zone_m.buffer(0.5)).is_empty
 
 
 def test_t07_schema_and_labels():
-    composite, _ = flood.build_composite(components(), ZONE)
-    for name, geom in flood.build_scenarios(composite, ZONE).items():
+    comps = many_reports()
+    composite, _ = flood.build_composite(comps, ZONE)
+    for name, geom in flood.build_scenarios(comps, composite, ZONE).items():
         gdf = flood.to_gdf(geom, name)
         flood.validate_flood_gdf(gdf)
         assert gdf.crs.to_string() == "EPSG:4326"

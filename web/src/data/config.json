@@ -30,11 +30,11 @@
       "value": 25.0
     },
     {
-      "name": "SCENARIO_BUFFER_M",
+      "name": "SCENARIO_FEATURE_SHARE",
       "value": {
-        "mild": -15.0,
-        "moderate": 10.0,
-        "severe": 30.0
+        "mild": 0.1,
+        "moderate": 0.2,
+        "severe": 0.35
       }
     },
     {

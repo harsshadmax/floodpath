@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 import geopandas as gpd
+import numpy as np
 from shapely.geometry import Polygon, box, shape
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import unary_union
@@ -107,13 +108,41 @@ def build_composite(
     return unary_union(parts), areas
 
 
-def build_scenarios(composite: BaseGeometry, zone_geo: Polygon, cfg: Config = CONFIG) -> Dict[str, BaseGeometry]:
-    """Observed composite plus mild, moderate and severe (simulated) by buffering, all clipped to the zone."""
+STREET_LEVEL = ("stagnation", "gcc_hotspots", "crowd_lines")
+
+
+def street_features(components: Dict[str, gpd.GeoDataFrame], cfg: Config = CONFIG) -> List[BaseGeometry]:
+    """Buffered street-level flood reports (metric CRS), in a fixed order, one geometry per report."""
+    feats: List[BaseGeometry] = []
+    for name in STREET_LEVEL:
+        if name in components:
+            feats.extend(g for g in buffer_component(components[name], cfg) if not g.is_empty)
+    return feats
+
+
+def draw_ranks(n: int, seed: int) -> np.ndarray:
+    """One uniform number per report. A report is kept when its number is below the scenario share, so
+    scenarios built from the same ranks are nested (mild inside moderate inside severe)."""
+    return np.random.default_rng(seed).random(n)
+
+
+def subset_geometry(features: List[BaseGeometry], ranks: np.ndarray, share: float, zone_m: BaseGeometry) -> BaseGeometry:
+    kept = [f for f, r in zip(features, ranks) if r < share]
+    if not kept:
+        return Polygon()
+    return unary_union(kept).intersection(zone_m)
+
+
+def build_scenarios(
+    components: Dict[str, gpd.GeoDataFrame], composite: BaseGeometry, zone_geo: Polygon, cfg: Config = CONFIG
+) -> Dict[str, BaseGeometry]:
+    """The observed composite plus mild, moderate and severe: seeded nested subsets of street-level reports."""
     zone_m = gpd.GeoSeries([zone_geo], crs=cfg.CRS_GEO).to_crs(cfg.CRS_METRIC).iloc[0]
+    feats = street_features(components, cfg)
+    ranks = draw_ranks(len(feats), cfg.RANDOM_SEED)
     out: Dict[str, BaseGeometry] = {"observed": composite}
-    for name, buffer_m in cfg.SCENARIO_BUFFER_M:
-        shaped = composite.buffer(buffer_m) if buffer_m != 0 else composite
-        out[name] = shaped.intersection(zone_m)
+    for name, share in cfg.SCENARIO_FEATURE_SHARE:
+        out[name] = subset_geometry(feats, ranks, share, zone_m)
     return out
 
 
@@ -159,7 +188,7 @@ def build_all(cfg: Config = CONFIG, raw_dir: Path = RAW, out_dir: Path = PROCESS
         # keep only features that touch the zone (speeds up buffering; the clip happens later)
         components[name] = gdf[gdf.intersects(zone)]
     composite, component_areas = build_composite(components, zone, cfg)
-    scenarios = build_scenarios(composite, zone, cfg)
+    scenarios = build_scenarios(components, composite, zone, cfg)
     out_dir.mkdir(parents=True, exist_ok=True)
     stats: Dict[str, object] = {"component_area_km2_in_zone": component_areas, "scenario_area_km2": {}}
     zone_area_km2 = gpd.GeoSeries([zone], crs=cfg.CRS_GEO).to_crs(cfg.CRS_METRIC).iloc[0].area / 1e6

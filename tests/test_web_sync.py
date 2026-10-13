@@ -24,6 +24,6 @@ def test_web_config_matches_python_config():
     assert values["FLOOD_FRACTION_BLOCKED"] == CONFIG.FLOOD_FRACTION_BLOCKED
     assert values["AT_RISK_TIME_MULTIPLIER"] == CONFIG.AT_RISK_TIME_MULTIPLIER
     assert values["LINE_BUFFER_M"] == CONFIG.LINE_BUFFER_M
-    assert values["SCENARIO_BUFFER_M"] == dict(CONFIG.SCENARIO_BUFFER_M)
+    assert values["SCENARIO_FEATURE_SHARE"] == dict(CONFIG.SCENARIO_FEATURE_SHARE)
     assert values["RANDOM_SEED"] == CONFIG.RANDOM_SEED
     assert web["study"]["bbox"] == list(CONFIG.STUDY_BBOX), "run: python scripts/export_web_config.py"
