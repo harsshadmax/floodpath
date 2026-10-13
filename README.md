@@ -2,7 +2,7 @@
 
 Flood-aware emergency routing to maternal-care facilities: a historical-data-informed **simulation** that compares conventional shortest-path routing with flood-aware routing, using the Chennai 2015 floods as a replay. Built for the Seva First Innovation Challenge (Track A).
 
-**Status: PHASE 1 (data inspection and preview skeleton). Nothing here is a working product yet: the dashboard shows "Not built yet" placeholders; only the Data and limits page is real.** See `docs/PLAN_2H.md` for the 2-hour cut and `blueprint.md` for the full specification.
+**Status: PHASE 2 done (road graph, flood layers, scenarios, map). Not yet a working product: routes, facilities, metrics and KPI values are not built; those cards say "Not built yet".** See `docs/PLAN_2H.md` for the 2-hour cut and `blueprint.md` for the full specification.
 
 ## What it is not
 Not live data, not a flood predictor, not a dispatch system. Ambulance data is simulated. The facility list is a proxy and is not a clinical certification. Tamil and Hindi text are **draft translations** until reviewed.
@@ -20,6 +20,13 @@ python -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
 .venv\Scripts\python -m pytest
 ```
+Data for the map (PHASE 2): download the small OpenCity files, then build the road graph, flood layers and scenarios (needs internet once; the graph is cached):
+```
+.venv\Scripts\python src\fetch_data.py
+.venv\Scripts\python scripts\build_phase2.py
+```
+This writes `data/processed/` and `web/public/data/` (both gitignored). Without it the map card shows a "run build_phase2.py" message.
+
 Web app (Next.js, in `web/`):
 ```
 cd web

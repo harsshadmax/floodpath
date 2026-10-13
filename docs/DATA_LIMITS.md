@@ -25,5 +25,13 @@ Central Chennai, bbox W 80.205, S 13.010, E 80.270, N 13.100 (about 70 km2). Ins
 - **Ward population join skipped.** Census 2011 (155 wards) and DataMeet ward polygons (201 features) were not downloaded or joined. Population coverage therefore uses equal sample-point weights and shows the placeholder notice (blueprint Section 2.4). It is a share of sample points, not of people.
 - **Only the 5 GCC emergency obstetric units are candidate facilities** (3 inside the zone). The 4 NHM-listed CEmONC hospitals are not included (no coordinates). All facilities are `unverified`; no phone verification was done.
 
+## PHASE 2 findings (2026-10-13)
+- **Road graph (OpenStreetMap, today's roads):** 12,330 nodes, 30,403 directed edges, 2,241 km of drivable road in the zone, 63 strongly connected components (the largest holds 12,214 nodes, 99.1%). Built in 18 s; cached as `data/processed/roads.graphml` (not committed).
+- **Flood layer areas inside the zone (km2, before union):** NRSC inundation polygons 27.5; GCC stagnation points (buffered 75 m) 3.6; GCC hotspots (75 m) 1.4; crowd-sourced flooded street segments (buffered 25 m) 20.8. Feature counts in the zone: 290 polygons, 217 stagnation points, 87 hotspots, 2,139 street segments. The three district hotspot files are not used.
+- **Observed composite:** 41.6 km2, which is 59.2% of the 70.2 km2 zone. It is a union of the layers above, not one observation, and not the 1-4 Dec 2015 peak. The union also hides how much of it rests on low-confidence buffered points and lines (about 26 km2 of the inputs before overlaps are merged).
+- **Scenario buffers recalibrated.** The first guess (-100, 0, +150 m) gave mild = 1.6% and severe = 99.5% of the zone. `scripts/calibrate_scenarios.py` measured area against buffer; the values now used are -15, +10 and +30 m, giving mild 28.4 km2 (40.4%), moderate 49.0 km2 (69.9%) and severe 59.1 km2 (84.2%) against 41.6 km2 (59.2%) observed. These are arbitrary sensitivity settings chosen so the scenarios differ usefully, not physical flood models, and they say nothing about real depths or extents.
+- **Map basemap:** OpenStreetMap raster tiles from tile.openstreetmap.org (light demo use; attribution shown). Basemap labels stay in the tile provider's language and cannot follow the interface language.
+- **Web data size:** `roads.geojson` is about 5.5 MB (simplified to 3 m); flood layers 0.2 to 0.4 MB each. All are generated into `web/public/data/` (gitignored).
+
 ## Licence conflicts
 See `SOURCES.md`: OpenCity's dataset-level Public Domain tag versus its portal-wide CC BY-NC-SA 4.0 and ODbL statement.

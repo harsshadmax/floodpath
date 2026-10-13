@@ -11,3 +11,5 @@ data/processed/*.geojson
 data/processed/*.json
 data/processed/*.csv
 .env
+# Generated map data for the web app (derived from OpenStreetMap and OpenCity; rebuild with scripts/build_phase2.py)
+web/public/data/

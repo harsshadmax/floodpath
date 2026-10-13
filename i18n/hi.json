@@ -90,5 +90,14 @@
   "table.type": "प्रकार",
   "table.parameter": "पैरामीटर",
   "table.value": "मान",
-  "page.route.title": "मार्ग अन्वेषक"
+  "page.route.title": "मार्ग अन्वेषक",
+  "map.flood_layer": "बाढ़ परत",
+  "map.roads_layer": "सड़कें (वर्तमान OpenStreetMap)",
+  "map.zone": "अध्ययन क्षेत्र",
+  "map.loading": "मानचित्र डेटा लोड हो रहा है...",
+  "map.error": "मानचित्र डेटा लोड नहीं हो सका। python scripts/build_phase2.py चलाएँ।",
+  "map.tiles_note": "बेसमैप के लेबल मानचित्र प्रदाता की भाषा में ही रहते हैं।",
+  "map.attribution": "बाढ़ परतें: OpenCity (Oorvani Foundation), ग्रेटर चेन्नई कॉर्पोरेशन, NRSC. सड़कें: OpenStreetMap योगदानकर्ता।",
+  "map.area_stats": "{zone} वर्ग किमी में से {area} वर्ग किमी बाढ़ग्रस्त ({pct})",
+  "map.roads_note": "सड़कें आज की सड़कें हैं, 2015 की नहीं।"
 }

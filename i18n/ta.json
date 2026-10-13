@@ -90,5 +90,14 @@
   "table.type": "வகை",
   "table.parameter": "அளவுரு",
   "table.value": "மதிப்பு",
-  "page.route.title": "வழித்தட ஆய்வு"
+  "page.route.title": "வழித்தட ஆய்வு",
+  "map.flood_layer": "வெள்ள அடுக்கு",
+  "map.roads_layer": "சாலைகள் (தற்போதைய OpenStreetMap)",
+  "map.zone": "ஆய்வுப் பகுதி",
+  "map.loading": "வரைபடத் தரவு ஏற்றப்படுகிறது...",
+  "map.error": "வரைபடத் தரவை ஏற்ற முடியவில்லை. python scripts/build_phase2.py ஐ இயக்கவும்.",
+  "map.tiles_note": "அடிப்படை வரைபடத்தின் பெயர்கள் வரைபட வழங்குநரின் மொழியிலேயே இருக்கும்.",
+  "map.attribution": "வெள்ள அடுக்குகள்: OpenCity (Oorvani Foundation), பெருநகர சென்னை மாநகராட்சி, NRSC. சாலைகள்: OpenStreetMap பங்களிப்பாளர்கள்.",
+  "map.area_stats": "{zone} ச.கி.மீ-இல் {area} ச.கி.மீ வெள்ளத்தில் ({pct})",
+  "map.roads_note": "சாலைகள் இன்றைய சாலைகள்; 2015 சாலைகள் அல்ல."
 }

@@ -1,5 +1,13 @@
 # Preview log
 
+## 2026-10-13: CP-2 (PHASE 2): the real map with flood layers
+- **Shown:** Overview at 1440 px with card C1 as a real Leaflet map: OpenStreetMap basemap, dashed study zone, flood layer for the selected scenario, road outline (major roads dark, minor roads pale), layer toggles, area statistics, attribution. English (observed, mild, severe), Tamil (severe) and Hindi (mild) were captured; the Tamil capture was inspected, the Hindi one was captured but not opened.
+- **Real:** the flood layers (observed composite = union of OpenCity layers, 41.6 km2 of 70.2; simulated mild 28.4, moderate 49.0, severe 59.1), the road outline (12,330 nodes, 30,403 edges, today's roads), the scenario switch, the area statistics.
+- **Placeholder:** all five KPI values and cards C2 to C6 ("Not built yet"); no routes, facilities or road classes yet.
+- **Found and fixed during this phase:** (1) the first scenario buffers (-100, 0, +150 m) gave 2% and 100% of the zone, so they were recalibrated (docs/DATA_LIMITS.md); (2) the flood fill hid the roads, so roads now draw on top and are styled by hierarchy; (3) the dev server served stale CSS after edits, fixed by restarting it; (4) the in-app browser pane's capture of an emulated 1440 px viewport comes out scaled into a corner, so wide screenshots use a separate headless browser.
+- **Known limits:** the road outline is dense at this zoom; the map cannot be panned beyond the basemap tiles' needs offline (tiles need internet); the observed composite is not a real observed extent; the severe scenario is an arbitrary +30 m buffer.
+- **User decision:** pending.
+
 One entry per preview checkpoint (blueprint Section 14.12). Screenshots are taken from the running app in a browser pane; none is a mockup.
 
 ## 2026-10-13: PHASE 1 skeleton preview (before CP-2)

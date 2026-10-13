@@ -43,15 +43,19 @@ class Config:
     POINT_BUFFER_M: float = 75.0
     # The crowd-sourced layer is LineStrings (flooded street segments), not points (found in PHASE 1).
     LINE_BUFFER_M: float = 25.0  # A-22: roughly a road width plus margin
+    # Recalibrated in PHASE 2 (scripts/calibrate_scenarios.py). The blueprint's first guess (-100, 0, +150 m)
+    # gave mild = 2% and severe = 100% of the zone because the observed composite already covers 59% of it.
+    # With these values the simulated scenarios cover about 40%, 70% and 84% of the zone (observed: 59%).
+    # They are arbitrary sensitivity settings chosen so the scenarios differ usefully, not physical models.
     SCENARIO_BUFFER_M: Tuple[Tuple[str, float], ...] = (
-        ("mild", -100.0),
-        ("moderate", 0.0),
-        ("severe", 150.0),
+        ("mild", -15.0),
+        ("moderate", 10.0),
+        ("severe", 30.0),
     )
 
     # Robustness (A-07)
     ROBUSTNESS_RUNS: int = 50
-    ROBUSTNESS_BUFFER_RANGE_M: Tuple[float, float] = (-100.0, 150.0)
+    ROBUSTNESS_BUFFER_RANGE_M: Tuple[float, float] = (-20.0, 30.0)  # recalibrated with the scenarios (about 0.6x to 1.4x of observed)
 
     # Metrics (A-06: an analysis parameter, not an official standard)
     COVERAGE_THRESHOLD_MIN: float = 30.0

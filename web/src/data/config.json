@@ -32,9 +32,9 @@
     {
       "name": "SCENARIO_BUFFER_M",
       "value": {
-        "mild": -100.0,
-        "moderate": 0.0,
-        "severe": 150.0
+        "mild": -15.0,
+        "moderate": 10.0,
+        "severe": 30.0
       }
     },
     {

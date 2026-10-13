@@ -514,7 +514,7 @@ The 30-minute figure is a configurable analysis threshold, **not** an official s
 
 Flood extent is uncertain. For `K = ROBUSTNESS_RUNS` runs (default 50), with `RANDOM_SEED`:
 
-1. Draw a buffer distance uniformly from `ROBUSTNESS_BUFFER_RANGE_M` (default -100 m to +150 m, assumption A-07).
+1. Draw a buffer distance uniformly from `ROBUSTNESS_BUFFER_RANGE_M` (default -20 m to +30 m, assumption A-07, recalibrated in PHASE 2).
 2. Buffer the observed composite by that distance, classify edges, build `G2_k`.
 3. For each origin, record the chosen facility `f_k*(i)` (or `None` if unreachable).
 
@@ -1065,8 +1065,8 @@ Caching: use `st.cache_resource` for the graph and `st.cache_data` for classific
 | `FLOOD_FRACTION_BLOCKED` | 0.50 | A-02 |
 | `AT_RISK_TIME_MULTIPLIER` | 3.0 | A-03 |
 | `POINT_BUFFER_M` | 75 | A-04: radius applied to flood points |
-| `SCENARIO_BUFFER_M` | mild -100, moderate 0, severe +150 | A-09 |
-| `ROBUSTNESS_RUNS`, `ROBUSTNESS_BUFFER_RANGE_M` | 50, (-100, 150) | A-07 |
+| `SCENARIO_BUFFER_M` | mild -15, moderate +10, severe +30 | A-09, recalibrated in PHASE 2 (the first guess of -100, 0, +150 gave 2% and 100% of the zone) |
+| `ROBUSTNESS_RUNS`, `ROBUSTNESS_BUFFER_RANGE_M` | 50, (-20, 30) | A-07, recalibrated with A-09 |
 | `COVERAGE_THRESHOLD_MIN` | 30 | A-06, not an official standard |
 | `N_ORIGINS`, `MIN_ORIGINS` | 20, 10 | |
 | `MIN_FLOOD_ADJACENT_ORIGINS`, `FLOOD_ADJACENT_RADIUS_M` | 5, 300 | A-10 |
@@ -1393,6 +1393,7 @@ Caching: use `st.cache_resource` for the graph and `st.cache_data` for classific
 | 15 | The Version 1.1 time budget did not include the dashboard and language work | Revised to about 16 hours core plus 1.5 hours optional, with a one-day cut line |
 | 16 | Basemap tile labels cannot follow the interface language | Stated as a limit on the Data and limits page (I18N-11) |
 | 17 | With the dashboard shell planned for PHASE 10, early UI previews would show nothing | A preview skeleton page moves into PHASE 1 and fills in phase by phase (Section 14.12); budget revised to about 17.5 hours |
+| 18 | The first scenario buffers (-100, 0, +150 m) gave mild = 2% and severe = 100% of the zone, because the observed composite already covers 59% of it | Recalibrated to -15, +10, +30 m using scripts/calibrate_scenarios.py (PHASE 2) |
 
 ### 16.2 Assumptions Register
 
@@ -1404,9 +1405,9 @@ Caching: use `st.cache_resource` for the graph and `st.cache_data` for classific
 | A-04 | Point buffer radius 75 m | Section 4.4 |
 | A-05 | OSMnx imputed speeds represent comparative, not absolute, travel times | Section 5.1 |
 | A-06 | 30-minute coverage threshold is an analysis parameter, not a standard | Section 5.5 |
-| A-07 | Robustness buffer range -100 m to +150 m | Section 5.6 |
+| A-07 | Robustness buffer range -20 m to +30 m (recalibrated in PHASE 2) | Section 5.6 |
 | A-08 | Tunnel sensitivity radius 50 m | Section 5.3 |
-| A-09 | Scenario buffers mild -100 m, moderate 0 m, severe +150 m | Section 4.4 |
+| A-09 | Scenario buffers mild -15 m, moderate +10 m, severe +30 m: about 40%, 70% and 84% of the zone against 59% for the observed composite (recalibrated in PHASE 2; arbitrary sensitivity settings, not physical models) | Section 4.4 |
 | A-10 | Flood-adjacent origin radius 300 m, minimum 5 origins | Section 5.5 |
 | A-11 | Maximum snap distance 300 m | Section 4.6 |
 | A-12 | 90% ward-join match rate to use real weights | Section 2.4 |

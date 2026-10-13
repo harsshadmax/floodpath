@@ -2,11 +2,15 @@
 // PHASE 1 preview skeleton in the final layout. Overview and Route show translated "Not built yet"
 // placeholders; Data and limits is already real. No analysis result is shown anywhere yet.
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import config from "@/data/config.json";
 import { LANGS, LANG_LABELS, englishOriginal, normalizeLang, t, translationStatus, type Lang } from "@/lib/i18n";
 import { DashboardIcon, InfoIcon, RouteIcon } from "./icons";
 import { Banner, Card, DatePill, KpiCard, Notice, Pills, Placeholder, Rail, type RailItem } from "./ui";
+
+// Leaflet touches `window`, so the map loads in the browser only.
+const RouteMap = dynamic(() => import("./RouteMap"), { ssr: false, loading: () => <div className="fp-placeholder" /> });
 
 type PageId = "overview" | "route" | "data";
 const SCENARIOS = ["observed", "mild", "moderate", "severe"] as const;
@@ -18,14 +22,18 @@ const GAP_KEYS = ["gap.facility_list", "gap.ambulance", "gap.peak", "gap.roads"]
 
 export default function Dashboard() {
   const [page, setPage] = useState<PageId>("overview");
-  const [scenario, setScenario] = useState<Scenario>("observed");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  // The first scenario can be set with ?scenario=severe (used for previews and shared links).
+  const [scenario, setScenario] = useState<Scenario>(() => {
+    const requested = searchParams.get("scenario");
+    return (SCENARIOS as readonly string[]).includes(requested ?? "") ? (requested as Scenario) : "observed";
+  });
   const [focus, setFocus] = useState<Focus>("reachability");
 
   // The language lives in the page address (?lang=ta), so a shared link opens in that language
   // (blueprint I18N-5) and an unsupported value falls back to English.
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const lang: Lang = normalizeLang(searchParams.get("lang"));
 
   useEffect(() => {
@@ -106,7 +114,11 @@ export default function Dashboard() {
               {["card.map", "card.coverage_by_scenario", "card.isolation_top", "card.edge_classes", "card.reach_by_facility", "card.top_origins"].map(
                 (key) => (
                   <Card key={key} title={T(key)} caption={caption}>
-                    <Placeholder text={T("state.not_built")} />
+                    {key === "card.map" ? (
+                      <RouteMap scenario={scenario} lang={lang} />
+                    ) : (
+                      <Placeholder text={T("state.not_built")} />
+                    )}
                   </Card>
                 ),
               )}

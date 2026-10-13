@@ -358,6 +358,57 @@ html[lang="hi"] .fp-caps {
   overflow-wrap: anywhere;
 }
 
+/* ---------- map card ---------- */
+.fp-grid-cards .fp-card {
+  display: flex;
+  flex-direction: column;
+}
+.fp-grid-cards .fp-placeholder {
+  flex: 1;
+}
+.fp-map-frame {
+  height: 400px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #e3e6e8;
+}
+.fp-map-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+.fp-map-toggles label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.fp-map-note {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 6px 0 0 0;
+  overflow-wrap: anywhere;
+}
+.fp-swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  vertical-align: -1px;
+}
+.fp-swatch-flood {
+  background: var(--flood);
+  border: 1px solid #2c8db8;
+}
+.fp-swatch-zone {
+  border: 2px dashed var(--blue);
+}
+.leaflet-container {
+  font-family: var(--font-ui);
+}
+
 /* ---------- data page ---------- */
 .fp-h2 {
   font-size: 26px;

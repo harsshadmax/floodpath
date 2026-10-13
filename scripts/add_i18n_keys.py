@@ -48,6 +48,40 @@ NEW = {
     "table.parameter": ("Parameter", "அளவுரு", "पैरामीटर"),
     "table.value": ("Value", "மதிப்பு", "मान"),
     "page.route.title": ("Route explorer", "வழித்தட ஆய்வு", "मार्ग अन्वेषक"),
+    # PHASE 2: map card
+    "map.flood_layer": ("Flood layer", "வெள்ள அடுக்கு", "बाढ़ परत"),
+    "map.roads_layer": (
+        "Roads (current OpenStreetMap)",
+        "சாலைகள் (தற்போதைய OpenStreetMap)",
+        "सड़कें (वर्तमान OpenStreetMap)",
+    ),
+    "map.zone": ("Study zone", "ஆய்வுப் பகுதி", "अध्ययन क्षेत्र"),
+    "map.loading": ("Loading map data...", "வரைபடத் தரவு ஏற்றப்படுகிறது...", "मानचित्र डेटा लोड हो रहा है..."),
+    "map.error": (
+        "Map data could not be loaded. Run python scripts/build_phase2.py.",
+        "வரைபடத் தரவை ஏற்ற முடியவில்லை. python scripts/build_phase2.py ஐ இயக்கவும்.",
+        "मानचित्र डेटा लोड नहीं हो सका। python scripts/build_phase2.py चलाएँ।",
+    ),
+    "map.tiles_note": (
+        "Basemap labels stay in the map provider's language.",
+        "அடிப்படை வரைபடத்தின் பெயர்கள் வரைபட வழங்குநரின் மொழியிலேயே இருக்கும்.",
+        "बेसमैप के लेबल मानचित्र प्रदाता की भाषा में ही रहते हैं।",
+    ),
+    "map.attribution": (
+        "Flood layers: OpenCity (Oorvani Foundation), Greater Chennai Corporation, NRSC. Roads: OpenStreetMap contributors.",
+        "வெள்ள அடுக்குகள்: OpenCity (Oorvani Foundation), பெருநகர சென்னை மாநகராட்சி, NRSC. சாலைகள்: OpenStreetMap பங்களிப்பாளர்கள்.",
+        "बाढ़ परतें: OpenCity (Oorvani Foundation), ग्रेटर चेन्नई कॉर्पोरेशन, NRSC. सड़कें: OpenStreetMap योगदानकर्ता।",
+    ),
+    "map.area_stats": (
+        "{area} km2 flooded of {zone} km2 ({pct})",
+        "{zone} ச.கி.மீ-இல் {area} ச.கி.மீ வெள்ளத்தில் ({pct})",
+        "{zone} वर्ग किमी में से {area} वर्ग किमी बाढ़ग्रस्त ({pct})",
+    ),
+    "map.roads_note": (
+        "Roads are today's roads, not 2015 roads.",
+        "சாலைகள் இன்றைய சாலைகள்; 2015 சாலைகள் அல்ல.",
+        "सड़कें आज की सड़कें हैं, 2015 की नहीं।",
+    ),
 }
 
 for i, lang in enumerate(("en", "ta", "hi")):

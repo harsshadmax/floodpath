@@ -90,5 +90,14 @@
   "table.type": "Type",
   "table.parameter": "Parameter",
   "table.value": "Value",
-  "page.route.title": "Route explorer"
+  "page.route.title": "Route explorer",
+  "map.flood_layer": "Flood layer",
+  "map.roads_layer": "Roads (current OpenStreetMap)",
+  "map.zone": "Study zone",
+  "map.loading": "Loading map data...",
+  "map.error": "Map data could not be loaded. Run python scripts/build_phase2.py.",
+  "map.tiles_note": "Basemap labels stay in the map provider's language.",
+  "map.attribution": "Flood layers: OpenCity (Oorvani Foundation), Greater Chennai Corporation, NRSC. Roads: OpenStreetMap contributors.",
+  "map.area_stats": "{area} km2 flooded of {zone} km2 ({pct})",
+  "map.roads_note": "Roads are today's roads, not 2015 roads."
 }
