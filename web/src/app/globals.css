@@ -473,3 +473,18 @@ html[lang="hi"] .fp-caps {
 .fp-swatch { width: 12px; height: 12px; border-radius: 4px; display: inline-block; flex: none; }
 .fp-table-compact th, .fp-table-compact td { padding: 6px 8px; font-size: 12px; }
 .fp-metrics-note { margin: 0 0 14px; font-size: 12px; color: var(--muted); }
+
+/* ---------- route explorer ---------- */
+.fp-route-grid { display: grid; grid-template-columns: minmax(280px, 380px) 1fr; gap: 22px; text-align: left; }
+@media (max-width: 900px) { .fp-route-grid { grid-template-columns: 1fr; } }
+.fp-select-label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.fp-select { width: 100%; padding: 9px 12px; border-radius: 12px; border: 1px solid var(--line); background: #fff; font: inherit; font-size: 14px; color: var(--text); box-shadow: var(--inset); }
+.fp-result { display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; margin: 16px 0; font-size: 13px; }
+.fp-result dt { color: var(--muted); }
+.fp-result dd { margin: 0; font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
+.fp-result .fp-badge { display: block; width: fit-content; margin: 6px 0 0; }
+.fp-h4 { margin: 14px 0 6px; font-size: 13px; color: var(--grey-title); }
+.fp-explain { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.5; display: flex; flex-direction: column; gap: 6px; }
+.fp-muted { color: var(--muted); font-size: 13px; margin: 0; }
+.fp-map-frame-tall { height: 520px; }
+.fp-legend-row { flex-direction: row; flex-wrap: wrap; gap: 8px 16px; margin-top: 10px; font-size: 12px; }

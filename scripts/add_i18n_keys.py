@@ -140,6 +140,55 @@ NEW = {
         "மாதிரி வசதிப் பட்டியல் மற்றும் உருவகப்படுத்தப்பட்ட தொடக்கப் புள்ளிகளின் அடிப்படையிலான சுட்டிக்காட்டும் உருவகப்படுத்துதல் முடிவுகள்; கணிப்புகள் அல்ல.",
         "प्रॉक्सी सुविधा सूची और सिम्युलेटेड आरंभ बिंदुओं पर संकेतात्मक सिमुलेशन परिणाम; पूर्वानुमान नहीं।",
     ),
+    # PHASE 9: route explorer and explanation text
+    "expl.reachable_same": (
+        "The nearest reachable facility offering {service} is {facility}, {time} minutes away, the same as the conventional route.",
+        "{service} வழங்கும் அருகிலுள்ள அடையக்கூடிய வசதி {facility}; {time} நிமிடத் தொலைவு, வழக்கமான வழித்தடத்திற்கு இணையானது.",
+        "{service} देने वाली निकटतम पहुँच योग्य सुविधा {facility} है, {time} मिनट दूर, पारंपरिक मार्ग के बराबर।",
+    ),
+    "expl.unreachable_facilities": (
+        "{k} facility(ies) cannot be reached: {names}.",
+        "{k} வசதி(கள்) அடைய முடியாதவை: {names}.",
+        "{k} सुविधा(एँ) पहुँच योग्य नहीं हैं: {names}।",
+    ),
+    "expl.status": (
+        "Facility status: {status}. Flood layer: {kind}, source {source}.",
+        "வசதியின் நிலை: {status}. வெள்ள அடுக்கு: {kind}, மூலம் {source}.",
+        "सुविधा की स्थिति: {status}। बाढ़ परत: {kind}, स्रोत {source}।",
+    ),
+    "reason.NO_PATH_AFTER_FLOODING": (
+        "no road path remains after flooding",
+        "வெள்ளத்திற்குப் பிறகு சாலை வழி எதுவும் இல்லை",
+        "बाढ़ के बाद कोई सड़क मार्ग नहीं बचा",
+    ),
+    "reason.ORIGIN_CUT_OFF": ("the start point is cut off", "தொடக்கப் புள்ளி துண்டிக்கப்பட்டது", "आरंभ बिंदु कट गया है"),
+    "route.pick_origin": (
+        "Choose a start (all simulated)",
+        "தொடக்கப் புள்ளியைத் தேர்ந்தெடுக்கவும் (அனைத்தும் உருவகப்படுத்தப்பட்டவை)",
+        "आरंभ बिंदु चुनें (सभी सिम्युलेटेड)",
+    ),
+    "route.group_starts": ("Ambulance starts (simulated)", "ஆம்புலன்ஸ் தொடக்கங்கள் (உருவகப்படுத்தப்பட்டவை)", "एम्बुलेंस आरंभ (सिम्युलेटेड)"),
+    "route.group_origins": ("Sample origins (simulated)", "மாதிரித் தொடக்கப் புள்ளிகள் (உருவகப்படுத்தப்பட்டவை)", "नमूना आरंभ बिंदु (सिम्युलेटेड)"),
+    "route.chosen": ("Chosen facility", "தேர்ந்தெடுக்கப்பட்ட வசதி", "चुनी गई सुविधा"),
+    "route.time_fa": ("Flood-aware time", "வெள்ளம் அறிந்த நேரம்", "बाढ़-जागरूक समय"),
+    "route.time_conv": ("Conventional time", "வழக்கமான நேரம்", "पारंपरिक समय"),
+    "route.difference": ("Difference", "வேறுபாடு", "अंतर"),
+    "route.drivable": ("Conventional route drivable", "வழக்கமான வழித்தடம் ஓட்டத்தக்கது", "पारंपरिक मार्ग चलने योग्य"),
+    "route.yes": ("Yes", "ஆம்", "हाँ"),
+    "route.no": ("No", "இல்லை", "नहीं"),
+    "route.none": ("None", "எதுவும் இல்லை", "कोई नहीं"),
+    "route.explanation": ("Why this route", "இந்த வழித்தடம் ஏன்", "यह मार्ग क्यों"),
+    "route.unreachable_title": ("Unreachable facilities", "அடைய முடியாத வசதிகள்", "अप्राप्य सुविधाएँ"),
+    "route.legend_blocked": ("Blocked on conventional route", "வழக்கமான வழித்தடத்தில் தடுக்கப்பட்டது", "पारंपरिक मार्ग पर अवरुद्ध"),
+    "route.legend_facility": ("Facility", "வசதி", "सुविधा"),
+    "route.legend_start": ("Start (simulated)", "தொடக்கம் (உருவகப்படுத்தப்பட்டது)", "आरंभ (सिम्युलेटेड)"),
+    "route.verification": ("Verification", "சரிபார்ப்பு", "सत्यापन"),
+    "route.minutes_value": ("{n} min", "{n} நிமிடம்", "{n} मिनट"),
+    "state.routes_missing": (
+        "Route file not found. Run python scripts/build_routes.py.",
+        "வழித்தடக் கோப்பு கிடைக்கவில்லை. python scripts/build_routes.py ஐ இயக்கவும்.",
+        "मार्ग फ़ाइल नहीं मिली। python scripts/build_routes.py चलाएँ।",
+    ),
 }
 
 for i, lang in enumerate(("en", "ta", "hi")):

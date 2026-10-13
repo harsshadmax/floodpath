@@ -46,3 +46,10 @@ One entry per preview checkpoint (blueprint Section 14.12). Screenshots are take
 - **Placeholder / not built:** isolation card (C3, "Planned, not built"), Route explorer page, explanation text, audit download.
 - **Honest limits:** observed composite shows a "not routed on" message instead of numbers; severe shows 0% reachability everywhere (cliff effect, see docs/DATA_LIMITS.md); travel-time increase is empty for moderate and severe; Tamil and Hindi are drafts.
 - **User decision:** pending.
+
+## 2026-10-13: CP-5 (PHASE 9, part): Route explorer and explanation text
+- **Shown:** `docs/previews/cp5_route_mild_en.png`, `cp5_route_moderate_ta.png`, `cp5_route_severe_hi.png` (1440 px, headless Edge, dev server). All three were opened. Page address `?page=route&scenario=...&lang=...` opens the explorer directly.
+- **Real:** start picker (6 simulated ambulance starts, 20 sample origins), map with the conventional route (dashed grey), blocked segments on it (red), flood-aware route (blue), facilities with verification badge in the tooltip, result panel, explanation sentences, unreachable-facility list with reasons. Sentences are built in Python (`src/explain.py`) from computed values only, for each of the three languages; facility names are never translated.
+- **Not built:** audit log download, isolation card, Metrics table and Export pages. The observed composite is not routed on and says so.
+- **Notes:** the unreachable facilities appear both in the explanation and in the list below it (duplication is deliberate). The basemap's own red cross icons are OpenStreetMap hospital symbols, not this app's facilities (which are the blue and grey circles).
+- **User decision:** pending.

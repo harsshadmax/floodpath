@@ -107,3 +107,37 @@ def choose_facilities(G2: nx.MultiDiGraph, origins: List[int], facilities: pd.Da
                     best = key
         chosen.append(None if best is None else best[2])
     return chosen
+
+
+def path_coords(G: nx.MultiDiGraph, path: List[int], ndigits: int = 5) -> List[List[float]]:
+    """[lon, lat] points along a node path, following each road's stored shape where it has one."""
+    if not path:
+        return []
+    if len(path) == 1:
+        return [[round(G.nodes[path[0]]["x"], ndigits), round(G.nodes[path[0]]["y"], ndigits)]]
+    pts: List[List[float]] = []
+    for u, v, key in _cheapest_edges(G, path):
+        data = G[u][v][key]
+        geom = data.get("geometry")
+        if geom is not None:
+            coords = list(geom.coords)
+            # stored shapes run in the direction of the original way; flip if this edge is the reverse
+            if (coords[0][0] - G.nodes[u]["x"]) ** 2 + (coords[0][1] - G.nodes[u]["y"]) ** 2 > \
+               (coords[-1][0] - G.nodes[u]["x"]) ** 2 + (coords[-1][1] - G.nodes[u]["y"]) ** 2:
+                coords.reverse()
+        else:
+            coords = [(G.nodes[u]["x"], G.nodes[u]["y"]), (G.nodes[v]["x"], G.nodes[v]["y"])]
+        for x, y in coords:
+            p = [round(x, ndigits), round(y, ndigits)]
+            if not pts or pts[-1] != p:
+                pts.append(p)
+    return pts
+
+
+def edge_coords(G: nx.MultiDiGraph, edge_ids: List[str], ndigits: int = 5) -> List[List[List[float]]]:
+    """Line segments for edge ids of the form 'u-v-key' (used to draw blocked roads)."""
+    out = []
+    for eid in edge_ids:
+        u, v, key = (int(p) for p in eid.split("-"))
+        out.append(path_coords(G, [u, v]) if G.has_edge(u, v, key) else [])
+    return [seg for seg in out if seg]

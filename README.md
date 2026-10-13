@@ -2,7 +2,7 @@
 
 Flood-aware emergency routing to maternal-care facilities: a historical-data-informed **simulation** that compares conventional shortest-path routing with flood-aware routing, using the Chennai 2015 floods as a replay. Built for the Seva First Innovation Challenge (Track A).
 
-**Status: PHASE 7 done (metrics and KPI cards with real values, charts C2, C4, C5, C6). Still not built: Route explorer page, explanation text, audit log download, isolation view (C3). Tamil and Hindi are draft translations. All results are simulation outputs, not predictions.**
+**Status: PHASE 9 (part) done: metrics and KPI cards, Route explorer with both routes and template-based explanation text in English, Tamil and Hindi. Still not built: audit log download, isolation view (C3), Metrics table and Export pages. Tamil and Hindi are draft translations. All results are simulation outputs, not predictions.**
 
 ## What it is not
 Not live data, not a flood predictor, not a dispatch system. Ambulance data is simulated. The facility list is a proxy and is not a clinical certification. Tamil and Hindi text are **draft translations** until reviewed.

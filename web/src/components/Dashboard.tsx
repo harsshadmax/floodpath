@@ -11,6 +11,7 @@ import { DashboardIcon, InfoIcon, RouteIcon } from "./icons";
 import { Banner, Card, DatePill, KpiCard, Pills, Placeholder, Rail, type RailItem } from "./ui";
 
 // Leaflet touches `window`, so the map loads in the browser only.
+const RouteExplorer = dynamic(() => import("./RouteExplorer"), { ssr: false, loading: () => <div className="fp-placeholder" /> });
 const RouteMap = dynamic(() => import("./RouteMap"), { ssr: false, loading: () => <div className="fp-placeholder" /> });
 
 type PageId = "overview" | "route" | "data";
@@ -22,10 +23,14 @@ const SIM_ORDER = ["mild", "moderate", "severe"] as const;
 const GAP_KEYS = ["gap.facility_list", "gap.ambulance", "gap.peak", "gap.roads"];
 
 export default function Dashboard() {
-  const [page, setPage] = useState<PageId>("overview");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  // ?page=route opens the Route explorer directly (previews and shared links)
+  const [page, setPage] = useState<PageId>(() => {
+    const requested = searchParams.get("page");
+    return requested === "route" || requested === "data" ? requested : "overview";
+  });
   // The first scenario can be set with ?scenario=severe (used for previews and shared links).
   const [scenario, setScenario] = useState<Scenario>(() => {
     const requested = searchParams.get("scenario");
@@ -188,7 +193,7 @@ export default function Dashboard() {
 
         {page === "route" && (
           <Card title={T("page.route.title")} caption={caption}>
-            <Placeholder text={T("state.not_built")} />
+            <RouteExplorer scenario={scenario} lang={lang} />
           </Card>
         )}
 
