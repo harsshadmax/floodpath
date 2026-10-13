@@ -9,6 +9,7 @@ import type { LatLngBoundsExpression, PathOptions } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import config from "@/data/config.json";
 import { t, type Lang } from "@/lib/i18n";
+import { downloadAudit as saveAudit } from "@/lib/download";
 
 type Pt = [number, number];
 type RouteResult = {
@@ -67,14 +68,7 @@ export default function RouteExplorer({ scenario, lang }: { scenario: string; la
   // document for this scenario and start, plus the download time and the interface language.
   const downloadAudit = async () => {
     try {
-      const all = await getJson<Record<string, Record<string, Record<string, unknown>>>>("/data/audit.json");
-      const doc = { ...all[scenario][pointId], generated_at: new Date().toISOString(), ui_language: lang };
-      const url = URL.createObjectURL(new Blob([JSON.stringify(doc, null, 2)], { type: "application/json" }));
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `floodpath_audit_${scenario}_${pointId}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
+      await saveAudit(scenario, pointId, lang);
       setAuditError(false);
     } catch {
       setAuditError(true);

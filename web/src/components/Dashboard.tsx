@@ -6,15 +6,20 @@ import dynamic from "next/dynamic";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import config from "@/data/config.json";
 import { LANGS, LANG_LABELS, englishOriginal, fmtPct, normalizeLang, t, translationStatus, type Lang } from "@/lib/i18n";
+import MetricsTable from "./MetricsTable";
+import ExportPage from "./ExportPage";
 import { CoverageByScenario, EdgeClasses, ReachByFacility, Spark, TopOrigins, type MetricsFile } from "./Charts";
-import { DashboardIcon, InfoIcon, RouteIcon } from "./icons";
+import { DashboardIcon, DownloadIcon, InfoIcon, LayersIcon, RouteIcon, TableIcon } from "./icons";
 import { Banner, Card, DatePill, KpiCard, Pills, Placeholder, Rail, type RailItem } from "./ui";
 
 // Leaflet touches `window`, so the map loads in the browser only.
 const RouteExplorer = dynamic(() => import("./RouteExplorer"), { ssr: false, loading: () => <div className="fp-placeholder" /> });
+const IsolationPage = dynamic(() => import("./Isolation"), { ssr: false, loading: () => <div className="fp-placeholder" /> });
+const IsolationTop = dynamic(() => import("./Isolation").then((m) => m.IsolationTop), { ssr: false, loading: () => <div className="fp-placeholder" /> });
 const RouteMap = dynamic(() => import("./RouteMap"), { ssr: false, loading: () => <div className="fp-placeholder" /> });
 
-type PageId = "overview" | "route" | "data";
+type PageId = "overview" | "route" | "isolation" | "metrics" | "export" | "data";
+const PAGE_IDS: readonly string[] = ["overview", "route", "isolation", "metrics", "export", "data"];
 const SCENARIOS = ["observed", "mild", "moderate", "severe"] as const;
 type Scenario = (typeof SCENARIOS)[number];
 const FOCUS = ["reachability", "coverage", "time"] as const;
@@ -29,7 +34,7 @@ export default function Dashboard() {
   // ?page=route opens the Route explorer directly (previews and shared links)
   const [page, setPage] = useState<PageId>(() => {
     const requested = searchParams.get("page");
-    return requested === "route" || requested === "data" ? requested : "overview";
+    return PAGE_IDS.includes(requested ?? "") ? (requested as PageId) : "overview";
   });
   // The first scenario can be set with ?scenario=severe (used for previews and shared links).
   const [scenario, setScenario] = useState<Scenario>(() => {
@@ -110,6 +115,11 @@ export default function Dashboard() {
     [
       { id: "overview", label: T("nav.overview"), icon: <DashboardIcon /> },
       { id: "route", label: T("nav.route"), icon: <RouteIcon /> },
+      { id: "isolation", label: T("nav.isolation"), icon: <LayersIcon /> },
+    ],
+    [
+      { id: "metrics", label: T("nav.metrics"), icon: <TableIcon /> },
+      { id: "export", label: T("nav.export"), icon: <DownloadIcon /> },
     ],
     [{ id: "data", label: T("nav.data"), icon: <InfoIcon /> }],
   ];
@@ -172,7 +182,7 @@ export default function Dashboard() {
                     {key === "card.map" ? (
                       <RouteMap scenario={scenario} lang={lang} />
                     ) : key === "card.isolation_top" ? (
-                      <Placeholder text={T("state.planned_not_built")} />
+                      <IsolationTop scenario={scenario} lang={lang} />
                     ) : key === "card.coverage_by_scenario" && m ? (
                       <CoverageByScenario lang={lang} metrics={m} />
                     ) : key === "card.edge_classes" && sm ? (
@@ -194,6 +204,24 @@ export default function Dashboard() {
         {page === "route" && (
           <Card title={T("page.route.title")} caption={caption}>
             <RouteExplorer scenario={scenario} lang={lang} />
+          </Card>
+        )}
+
+        {page === "isolation" && (
+          <Card title={T("nav.isolation")} caption={caption}>
+            <IsolationPage scenario={scenario} lang={lang} />
+          </Card>
+        )}
+
+        {page === "metrics" && (
+          <Card title={T("nav.metrics")} caption={caption}>
+            <MetricsTable scenario={scenario} lang={lang} />
+          </Card>
+        )}
+
+        {page === "export" && (
+          <Card title={T("nav.export")} caption={caption}>
+            <ExportPage scenario={scenario} lang={lang} />
           </Card>
         )}
 

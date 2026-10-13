@@ -48,3 +48,23 @@ export const CalendarIcon = () => (
     <path d="M3 10h18M8 3v4M16 3v4" />
   </Svg>
 );
+
+export const LayersIcon = () => (
+  <Svg>
+    <path d="M12 4 3.500 8.500 12 13l8.500-4.500L12 4Z" />
+    <path d="m3.500 12.500 8.500 4.500 8.500-4.500" />
+    <path d="m3.500 16 8.500 4.500 8.500-4.500" />
+  </Svg>
+);
+export const TableIcon = () => (
+  <Svg>
+    <rect x="4" y="5" width="16" height="14" rx="2" />
+    <path d="M4 10h16M10 10v9" />
+  </Svg>
+);
+export const DownloadIcon = () => (
+  <Svg>
+    <path d="M12 4v10m0 0-4-4m4 4 4-4" />
+    <path d="M5 19h14" />
+  </Svg>
+);

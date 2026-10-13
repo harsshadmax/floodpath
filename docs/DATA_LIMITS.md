@@ -63,3 +63,10 @@ How to read these:
 - **Conventional routes look worse than they are.** The 100% false-route rate and 0% conventional coverage in moderate and severe come from sample origins that are all within 300 m of flooded areas and from a network where a single blocked edge breaks a route. Origins elsewhere in the city were not sampled.
 - **Coverage is a share of sample points, not of people** (placeholder weights; ward population join skipped).
 - **Free-flow speeds**, so minutes are comparative, not real response times (assumption A-05).
+
+## PHASE 8 findings (2026-10-13): isolation view, metrics table, export page
+- **Units are 1 km grid cells, not wards.** The ward polygons and Census 2011 populations were never loaded (the join was cut from the 2-hour plan, and downloading them needs separate approval). All 79 cells that have at least 5 eligible road nodes carry the placeholder population weight 1.0, so the ranking follows the share of road nodes cut off, not people, and the "people" column is a share of sample points. The Section 5.7.5 worked example (ranks Z, X, Y) is reproduced by test T-22 on the ranking function.
+- **Results (isolated share of road nodes):** mild: 67 of 79 cells have at least one isolated node, top cell r1c7 at 100%; moderate: 72 of 79, three cells at 100%; severe: all 79 cells, every cell at or near 100% (all three facilities are cut off, so the ranking cannot separate cells). 56 road nodes cannot reach any facility even without flooding and are excluded.
+- **Node share overstates isolation.** One blocked road next to a dead-end street isolates its nodes, so most cells show some isolation even in the mild scenario. It is a proxy for streets, not people.
+- **Rankings change a lot between scenarios** (for example r0c2 moves up 25 places from mild to moderate); the page shows this comparison instead of hiding it. No validation against reported cut-off areas was done (no reference list exists in the repository), and no accuracy figure is claimed.
+- **Metrics table and exports** read the same JSON as the KPI cards. CSV files use English column names and carry `ui_language`.
