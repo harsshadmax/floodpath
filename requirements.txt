@@ -1,0 +1,11 @@
+# FloodPath-Care: top-level pins (versions listed as latest by pip on 2026-10-13).
+# Altair is installed with Streamlit; its exact version is recorded in requirements.lock.txt after install.
+# Python note: the blueprint says 3.11, but only 3.13 is installed on this machine. Confirm everything installs and runs on 3.13.
+streamlit==1.65.0
+streamlit-folium==0.27.4
+folium==0.20.0
+osmnx==2.1.1
+geopandas==1.2.0
+shapely==2.2.0
+networkx==3.7
+pytest==9.1.1

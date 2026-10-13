@@ -1,0 +1,13 @@
+# Raw third-party data is never committed (licences: UNOSAT CC BY-NC-SA, OSM ODbL, OpenCity)
+data/raw/
+logs/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.streamlit/secrets.toml
+*.graphml
+data/processed/*.geojson
+data/processed/*.json
+data/processed/*.csv
+.env
