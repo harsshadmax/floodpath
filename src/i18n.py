@@ -41,6 +41,8 @@ CRITICAL_KEYS = (
     "kpi.not_routed",
     "kpi.note_feasibility",
     "iso.units_note",
+    "iso.units_note_wards",
+    "metrics.note_weighted",
     "iso.excluded_baseline",
     "metrics.note",
     "export.intro",

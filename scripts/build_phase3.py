@@ -15,7 +15,7 @@ sys.path.insert(0, str(ROOT))
 
 from config import CONFIG  # noqa: E402
 from src import facilities as fac  # noqa: E402
-from src import flood, impact, roads, route  # noqa: E402
+from src import flood, impact, roads, route, wards  # noqa: E402
 
 PROCESSED = ROOT / "data" / "processed"
 
@@ -30,6 +30,14 @@ def main() -> dict:
 
     scenarios = {s: impact.flood_union_metric(gpd.read_file(PROCESSED / f"flood_{s}.geojson")) for s in flood.SCENARIO_ORDER}
     origins = fac.sample_origins(G, scenarios["observed"])
+    try:
+        zone_wards, _ = wards.load_zone_wards()
+        origins = wards.attach_to_origins(origins, wards.assign_nodes(G, zone_wards), zone_wards)
+        origins["population_basis"] = "ward_census_2011"
+        print("origin weights: Census 2011 ward populations (scaled to the study zone)")
+    except wards.WardDataError as exc:
+        origins["population_basis"] = "placeholder"
+        print("origin weights: placeholder 1.0 (", exc, ")")
     origins.to_csv(PROCESSED / "origins.csv", index=False)
     starts = fac.make_ambulance_starts(G)
     print("origins:", len(origins), "flood-adjacent:", int(origins["flood_adjacent"].sum()), "| starts:", len(starts))

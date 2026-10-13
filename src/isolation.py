@@ -93,32 +93,44 @@ def rank_units(df: pd.DataFrame, cfg: Config = CONFIG) -> pd.DataFrame:
 
 
 def compute(G: nx.MultiDiGraph, G2: nx.MultiDiGraph, facility_nodes: List[int], cfg: Config = CONFIG,
-            populations: Dict[str, float] | None = None) -> Tuple[pd.DataFrame, List[str]]:
-    """The Section 3.9 table for one scenario, and non-fatal warning codes."""
+            populations: Dict[str, float] | None = None, units: Dict[int, str | None] | None = None,
+            unit_names: Dict[str, str] | None = None) -> Tuple[pd.DataFrame, List[str]]:
+    """The Section 3.9 table for one scenario, and non-fatal warning codes.
+
+    By default the units are the fallback grid cells with placeholder weights. Pass `units` (node ->
+    unit id, None for a node outside every unit), `populations` (unit id -> people) and optionally
+    `unit_names` to use wards with census populations.
+    """
     warnings: List[str] = []
     states = node_states(G, G2, facility_nodes, cfg)
     if all(s == "baseline_disconnected" for s in states.values()):
         raise IsolationError("ISOLATION_NO_ELIGIBLE_NODES", "every node is disconnected in the baseline graph")
-    cells, _ = grid_assignment(G, cfg)
+    by_unit: Dict[str, List[str]] = {}
+    if units is None:
+        cells, _ = grid_assignment(G, cfg)
+        for n, (r, c) in cells.items():
+            by_unit.setdefault(f"Zone r{r}c{c}", []).append(states[n])
+    else:
+        for n, uid in units.items():
+            if uid is None:
+                warnings.append("ISOLATION_NODE_UNASSIGNED")
+            else:
+                by_unit.setdefault(uid, []).append(states[n])
     rows = []
-    by_cell: Dict[Tuple[int, int], List[str]] = {}
-    for n, rc in cells.items():
-        by_cell.setdefault(rc, []).append(states[n])
-    for (r, c), st in sorted(by_cell.items()):
-        unit_id = f"Zone r{r}c{c}"
+    for unit_id, st in sorted(by_unit.items()):
         eligible = [s for s in st if s != "baseline_disconnected"]
         if len(eligible) < cfg.MIN_ELIGIBLE_NODES_PER_UNIT:
             warnings.append("ISOLATION_UNIT_EMPTY")
             continue
         pop = (populations or {}).get(unit_id, PLACEHOLDER_POPULATION)
         iso, dly = eligible.count("isolated"), eligible.count("delayed")
-        rows.append({"unit_id": unit_id, "unit_name": unit_id, "population": pop,
+        rows.append({"unit_id": unit_id, "unit_name": (unit_names or {}).get(unit_id, unit_id), "population": pop,
                      "population_basis": "placeholder" if populations is None else "ward_census_2011",
                      "nodes_total": len(st), "nodes_eligible": len(eligible),
                      "nodes_baseline_disconnected": len(st) - len(eligible), "nodes_isolated": iso, "nodes_delayed": dly,
                      "isolated_share": iso / len(eligible), "delayed_share": dly / len(eligible)})
     if not rows:
-        raise IsolationError("UNITS_NOT_AVAILABLE", "no grid cell has enough eligible nodes")
+        raise IsolationError("UNITS_NOT_AVAILABLE", "no unit has enough eligible nodes")
     return rank_units(pd.DataFrame(rows), cfg)[COLUMNS], warnings
 
 
@@ -133,4 +145,20 @@ def cells_geojson(G: nx.MultiDiGraph, unit_ids: List[str], cfg: Config = CONFIG)
             ring = [[round(x, 5), round(y, 5)] for x, y in geo.exterior.coords]
             feats.append({"type": "Feature", "properties": {"unit_id": uid},
                           "geometry": {"type": "Polygon", "coordinates": [ring]}})
+    return {"type": "FeatureCollection", "features": feats}
+
+
+def wards_geojson(zone_wards: "gpd.GeoDataFrame", unit_ids: List[str], tolerance_m: float = 3.0, cfg: Config = CONFIG) -> Dict[str, object]:
+    """Ward polygons clipped to the study zone (EPSG:4326, 5 decimals), keyed W<number> like the units."""
+    feats = []
+    metric = gpd.GeoSeries(zone_wards["geometry_in_zone"], crs=cfg.CRS_GEO).to_crs(cfg.CRS_METRIC).simplify(tolerance_m)
+    geo = metric.to_crs(cfg.CRS_GEO)
+    for ward_id, geom in zip(zone_wards["ward_id"], geo):
+        uid = f"W{int(ward_id)}"
+        if uid not in unit_ids or geom.is_empty:
+            continue
+        polys = list(geom.geoms) if geom.geom_type == "MultiPolygon" else [geom]
+        coords = [[[[round(x, 5), round(y, 5)] for x, y in p.exterior.coords]] for p in polys if p.geom_type == "Polygon"]
+        feats.append({"type": "Feature", "properties": {"unit_id": uid},
+                      "geometry": {"type": "MultiPolygon", "coordinates": coords}})
     return {"type": "FeatureCollection", "features": feats}

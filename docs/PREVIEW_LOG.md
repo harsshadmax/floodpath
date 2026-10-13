@@ -67,3 +67,10 @@ One entry per preview checkpoint (blueprint Section 14.12). Screenshots are take
 - **Found and fixed:** (1) the rank labels were missing because Leaflet registers tooltip handlers once per layer and my second `bindTooltip` call was ignored; (2) the Export page imported a map module during server rendering and caused a "window is not defined" error overlay, fixed by moving the data helpers into a map-free file; (3) in severe, ties took the lightest shade, so a fully cut-off map looked empty; (4) card and note text still said "ward" although the units are grid zones.
 - **Known limits:** zones are not wards; placeholder weights; severe cannot separate zones; the metrics table's "—" means no origin qualified.
 - **User decision:** pending.
+
+## 2026-10-13: CP-8 (PHASE 8b): ward join
+- **Shown:** `docs/previews/cp8_isolation_moderate_en.png`, `cp8_metrics_moderate_en.png`, `cp8_isolation_mild_ta.png` (1440 px). I opened the English isolation and metrics captures; the Tamil isolation capture was taken but not opened.
+- **Real:** 90 wards ranked on the isolation page with estimated people, Census 2011 basis stated, ward polygons clipped to the zone with rank numbers on the top 10; metrics note switched to the population-weighted wording; coverage now weighted by ward population; audit log lists D7 and D8 and the Census limitation.
+- **Join result:** 155 of 155 matched (see docs/DATA_LIMITS.md, PHASE 8b).
+- **Known limits:** same-ward identity of the two files only plausibility-checked; 20 origins in 20 different wards is a thin sample; the heading "Top five zones by scenario" still says "zones" for wards.
+- **User decision:** pending.

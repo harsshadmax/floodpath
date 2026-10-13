@@ -29,6 +29,7 @@ export type ScenarioMetrics = {
   robustness: { runs: number; overall: number; share_changed_at_least_once: number };
 };
 export type MetricsFile = {
+  population_basis?: string;
   facilities: { id: string; name: string; verification: string }[];
   scenarios: Record<string, ScenarioMetrics>;
   n_origins: number;

@@ -33,7 +33,7 @@ def main() -> None:
         for p in routes["points"]:
             res = routes["scenarios"].get(scenario, {}).get(p["id"])
             res = None if res is None else {k: v for k, v in res.items() if k not in RESULT_DROP}
-            out[scenario][p["id"]] = audit.build_audit(scenario, p, res, m, info, rows, excluded)
+            out[scenario][p["id"]] = audit.build_audit(scenario, p, res, m, info, rows, excluded, population_basis=metrics.get("population_basis", "placeholder"))
     text = json.dumps(out, separators=(",", ":"), ensure_ascii=False)
     (WEB / "audit.json").write_text(text, encoding="utf-8")
     print(f"audit.json {len(text) / 1024:.0f} KB, {sum(len(v) for v in out.values())} documents")

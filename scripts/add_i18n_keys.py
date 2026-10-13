@@ -243,6 +243,23 @@ NEW = {
     "export.audit_json": ("Audit log for the current scenario and the chosen start (JSON)", "தற்போதைய சூழ்நிலைக்கும் தேர்ந்த தொடக்கத்திற்குமான தணிக்கைப் பதிவு (JSON)", "वर्तमान परिदृश्य और चुने आरंभ का ऑडिट लॉग (JSON)"),
     "export.not_available": ("Not available for the observed composite: choose a simulated scenario.", "கவனிக்கப்பட்ட கூட்டுத் தொகுப்புக்குக் கிடைக்காது: உருவகப்படுத்தப்பட்ட சூழ்நிலையைத் தேர்ந்தெடுக்கவும்.", "प्रेक्षित संयोजन के लिए उपलब्ध नहीं: सिम्युलेटेड परिदृश्य चुनें।"),
     "export.failed": ("The file could not be created. Run the build scripts listed in the README.", "கோப்பை உருவாக்க முடியவில்லை. README இல் உள்ள உருவாக்கச் சிறுநிரல்களை இயக்கவும்.", "फ़ाइल नहीं बन सकी। README में दी गई बिल्ड स्क्रिप्ट चलाएँ।"),
+    # PHASE 8b: ward populations
+    "iso.units_note_wards": (
+        "Units are Chennai's 155 wards (2008 boundaries) clipped to the study zone. Populations are Census 2011, assumed evenly spread inside each ward and scaled to the part of the ward inside the zone. Estimates are indicative.",
+        "அலகுகள் சென்னையின் 155 வார்டுகள் (2008 எல்லைகள்), ஆய்வுப் பகுதிக்குள் வெட்டப்பட்டவை. மக்கள்தொகை 2011 கணக்கெடுப்பு; ஒவ்வொரு வார்டிலும் சீராகப் பரவியுள்ளதாகக் கருதி, வார்டின் ஆய்வுப் பகுதிக்குள் உள்ள பகுதிக்கு ஏற்ப அளவிடப்பட்டது. மதிப்பீடுகள் சுட்டிக்காட்டுபவை மட்டுமே.",
+        "इकाइयाँ चेन्नई के 155 वार्ड (2008 सीमाएँ) हैं, जो अध्ययन क्षेत्र तक काटे गए हैं। जनसंख्या 2011 की जनगणना की है, हर वार्ड में समान रूप से फैली मानी गई और वार्ड के क्षेत्र के भीतर वाले हिस्से के अनुसार घटाई गई। अनुमान केवल संकेतात्मक हैं।",
+    ),
+    "iso.limit2_wards": (
+        "Population is Census 2011 (old), assumed evenly spread inside each ward; it is not where people are during a flood.",
+        "மக்கள்தொகை 2011 கணக்கெடுப்பு (பழையது); ஒவ்வொரு வார்டிலும் சீராகப் பரவியுள்ளதாகக் கருதப்படுகிறது; வெள்ளத்தின்போது மக்கள் இருக்கும் இடம் இதுவல்ல.",
+        "जनसंख्या 2011 की जनगणना की है (पुरानी), हर वार्ड में समान रूप से फैली मानी गई है; बाढ़ के समय लोग जहाँ होते हैं, यह वह नहीं है।",
+    ),
+    "iso.basis_census": ("Census 2011, scaled to the study zone", "2011 கணக்கெடுப்பு, ஆய்வுப் பகுதிக்கு ஏற்ப அளவிடப்பட்டது", "2011 की जनगणना, अध्ययन क्षेत्र के अनुसार घटाई गई"),
+    "metrics.note_weighted": (
+        "Sample of {n} simulated origins, {runs} robustness runs. Coverage weights each origin by the Census 2011 population of its ward (scaled to the study zone), so it is an indicative share of people in the sample wards, not of the whole city. Not a prediction.",
+        "{n} உருவகப்படுத்தப்பட்ட தொடக்கப் புள்ளிகளின் மாதிரி, {runs} உறுதித்தன்மை ஓட்டங்கள். உள்ளடக்கம் ஒவ்வொரு தொடக்கப் புள்ளியையும் அதன் வார்டின் 2011 மக்கள்தொகையால் (ஆய்வுப் பகுதிக்கு ஏற்ப அளவிடப்பட்டது) எடையிடுகிறது; எனவே இது மாதிரி வார்டுகளில் உள்ள மக்களின் சுட்டிக்காட்டும் பங்கு, முழு நகரத்தினுடையது அல்ல. முன்னறிவிப்பு அல்ல.",
+        "{n} सिम्युलेटेड आरंभ बिंदुओं का नमूना, {runs} मजबूती रन। कवरेज हर आरंभ बिंदु को उसके वार्ड की 2011 जनगणना जनसंख्या (अध्ययन क्षेत्र के अनुसार घटाई गई) से भारित करता है, इसलिए यह नमूना वार्डों के लोगों का संकेतात्मक हिस्सा है, पूरे शहर का नहीं। पूर्वानुमान नहीं।",
+    ),
     "state.audit_missing": (
         "Audit file not found. Run python scripts/build_audit.py.",
         "தணிக்கைக் கோப்பு கிடைக்கவில்லை. python scripts/build_audit.py ஐ இயக்கவும்.",

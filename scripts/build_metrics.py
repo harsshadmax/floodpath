@@ -40,7 +40,8 @@ def main() -> dict:
     features = flood.street_features(components)
     ranks = flood.draw_ranks(len(features), CONFIG.RANDOM_SEED)
 
-    out = {"generated_on": date.today().isoformat(), "n_origins": len(origins), "n_reports": len(features),
+    basis = origins["population_basis"].iloc[0] if "population_basis" in origins else "placeholder"
+    out = {"generated_on": date.today().isoformat(), "population_basis": basis, "n_origins": len(origins), "n_reports": len(features),
            "facilities": [], "origins": [], "scenarios": {}}
     for f in suitable.itertuples():
         out["facilities"].append({"id": f.facility_id, "name": f.name, "lat": f.latitude, "lon": f.longitude,

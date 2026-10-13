@@ -96,7 +96,7 @@ export default function MetricsTable({ scenario, lang }: { scenario: string; lan
           ))}
         </tbody>
       </table>
-      <p className="fp-chart-note">{T("metrics.note", { n: data.n_origins, runs: data.scenarios.mild.robustness.runs })}</p>
+      <p className="fp-chart-note">{T(data.population_basis === "ward_census_2011" ? "metrics.note_weighted" : "metrics.note", { n: data.n_origins, runs: data.scenarios.mild.robustness.runs })}</p>
     </div>
   );
 }

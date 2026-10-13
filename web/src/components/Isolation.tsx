@@ -7,7 +7,7 @@ import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
 import type { Layer, PathOptions } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import config from "@/data/config.json";
-import { fmtPct, t, type Lang } from "@/lib/i18n";
+import { fmtInt, fmtPct, t, type Lang } from "@/lib/i18n";
 import { saveFile } from "@/lib/download";
 import { isolationCsv, SIM, useIsolation } from "./isolationData";
 
@@ -27,7 +27,7 @@ export function IsolationTop({ scenario, lang }: { scenario: string; lang: Lang 
         <thead>
           <tr>
             <th>{T("label.rank")}</th>
-            <th>{T("iso.unit")}</th>
+            <th>{T(data.population_basis === "ward_census_2011" ? "label.ward" : "iso.unit")}</th>
             <th>{T("iso.isolated_share")}</th>
           </tr>
         </thead>
@@ -35,18 +35,19 @@ export function IsolationTop({ scenario, lang }: { scenario: string; lang: Lang 
           {rows.map((u) => (
             <tr key={u.unit_id}>
               <td>{u.rank}</td>
-              <td className="fp-mono">{u.unit_id.replace("Zone ", "")}</td>
+              <td className="fp-mono">{unitLabel(u)}</td>
               <td>{fmtPct(u.isolated_share)}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      <p className="fp-chart-note">{T("iso.units_note")}</p>
+      <p className="fp-chart-note">{T(data.population_basis === "ward_census_2011" ? "iso.units_note_wards" : "iso.units_note")}</p>
     </div>
   );
 }
 
-type SortKey = "rank" | "unit_id" | "isolated_share" | "delayed_share" | "priority_score";
+type SortKey = "rank" | "unit_id" | "isolated_share" | "delayed_share" | "priority_score" | "estimated_people_isolated";
+const unitLabel = (u: { unit_name: string }) => u.unit_name.replace(/^Zone /, "");
 
 export default function IsolationPage({ scenario, lang }: { scenario: string; lang: Lang }) {
   const T = (k: string, p?: Record<string, string | number>) => t(lang, k, p);
@@ -84,11 +85,12 @@ export default function IsolationPage({ scenario, lang }: { scenario: string; la
     if (!u) return;
     // Leaflet registers tooltip handlers once per layer, so bind exactly one tooltip: a permanent rank
     // label for the top zones, a hover label for the rest. Details for every zone open on click.
-    layer.bindPopup(`${u.unit_id}: #${u.rank} · ${fmtPct(u.isolated_share)}`);
+    layer.bindPopup(`${unitLabel(u)}: #${u.rank} · ${fmtPct(u.isolated_share)}`);
     if (u.rank <= data.top_k) layer.bindTooltip(String(u.rank), { permanent: true, direction: "center", className: "fp-rank" });
-    else layer.bindTooltip(`${u.unit_id}: #${u.rank}`, { sticky: true });
+    else layer.bindTooltip(`${unitLabel(u)}: #${u.rank}`, { sticky: true });
   };
 
+  const wards = data.population_basis === "ward_census_2011";
   const [west, south, east, north] = config.study.bbox as number[];
   const head = (key: SortKey, label: string) => (
     <th aria-sort={sort.key === key ? (sort.asc ? "ascending" : "descending") : "none"}>
@@ -102,7 +104,7 @@ export default function IsolationPage({ scenario, lang }: { scenario: string; la
   return (
     <div>
       <p className="fp-metrics-note">{T("note.indicative_metrics")}</p>
-      <p className="fp-metrics-note">{T("label.placeholder_weights")}</p>
+      {!wards && <p className="fp-metrics-note">{T("label.placeholder_weights")}</p>}
       <div className="fp-iso-grid">
         <div>
           <div className="fp-map-frame fp-map-frame-tall" role="img" aria-label={T("nav.isolation")}>
@@ -113,7 +115,7 @@ export default function IsolationPage({ scenario, lang }: { scenario: string; la
             </MapContainer>
           </div>
           <p className="fp-chart-note">{T("iso.legend_rank", { k: data.top_k })}</p>
-          <p className="fp-chart-note">{T("iso.units_note")}</p>
+          <p className="fp-chart-note">{T(wards ? "iso.units_note_wards" : "iso.units_note")}</p>
           {data.scenarios[scenario].nodes_baseline_disconnected > 0 && (
             <p className="fp-chart-note">{T("iso.excluded_baseline", { n: data.scenarios[scenario].nodes_baseline_disconnected })}</p>
           )}
@@ -123,9 +125,10 @@ export default function IsolationPage({ scenario, lang }: { scenario: string; la
             <thead>
               <tr>
                 {head("rank", T("label.rank"))}
-                {head("unit_id", T("iso.unit"))}
+                {head("unit_id", T(wards ? "label.ward" : "iso.unit"))}
                 {head("isolated_share", T("iso.isolated_share"))}
                 {head("delayed_share", T("iso.delayed_share"))}
+                {wards && head("estimated_people_isolated", T("label.est_people_isolated"))}
                 {head("priority_score", T("iso.score"))}
               </tr>
             </thead>
@@ -133,15 +136,18 @@ export default function IsolationPage({ scenario, lang }: { scenario: string; la
               {sorted.slice(0, 15).map((u) => (
                 <tr key={u.unit_id}>
                   <td>{u.rank}</td>
-                  <td className="fp-mono">{u.unit_id.replace("Zone ", "")}</td>
+                  <td className="fp-mono">{unitLabel(u)}</td>
                   <td>{fmtPct(u.isolated_share)}</td>
                   <td>{fmtPct(u.delayed_share)}</td>
+                  {wards && <td>{fmtInt(u.estimated_people_isolated)}</td>}
                   <td>{u.priority_score.toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <p className="fp-chart-note">{T("iso.basis")}: {T("iso.basis_placeholder")}; {T("iso.people_col")}</p>
+          <p className="fp-chart-note">
+            {T("iso.basis")}: {wards ? T("iso.basis_census") : `${T("iso.basis_placeholder")}; ${T("iso.people_col")}`}
+          </p>
           <button type="button" className="fp-btn" onClick={() => saveFile(`floodpath_isolation_${scenario}.csv`, "text/csv", isolationCsv(data, lang, [scenario]))}>
             {T("button.download_csv")}
           </button>
@@ -162,7 +168,7 @@ export default function IsolationPage({ scenario, lang }: { scenario: string; la
                   const delta = before === undefined ? null : before - u.rank;
                   return (
                     <li key={u.unit_id}>
-                      <span className="fp-mono">{u.unit_id.replace("Zone ", "")}</span> {fmtPct(u.isolated_share)}
+                      <span className="fp-mono">{unitLabel(u)}</span> {fmtPct(u.isolated_share)}
                       {prevRank && (
                         <span className="fp-rank-change" title={T("iso.rank_change")}>
                           {delta === null ? ` ${T("iso.new_in_top")}` : delta > 0 ? ` ▲${delta}` : delta < 0 ? ` ▼${-delta}` : " ="}
@@ -181,7 +187,7 @@ export default function IsolationPage({ scenario, lang }: { scenario: string; la
       <h4 className="fp-h4">{T("iso.limits_title")}</h4>
       <ul className="fp-explain">
         {[1, 2, 3, 4, 5].map((i) => (
-          <li key={i}>{T("iso.limit" + i)}</li>
+          <li key={i}>{T(i === 2 && wards ? "iso.limit2_wards" : "iso.limit" + i)}</li>
         ))}
       </ul>
     </div>

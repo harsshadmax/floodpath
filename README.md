@@ -2,7 +2,7 @@
 
 Flood-aware emergency routing to maternal-care facilities: a historical-data-informed **simulation** that compares conventional shortest-path routing with flood-aware routing, using the Chennai 2015 floods as a replay. Built for the Seva First Innovation Challenge (Track A).
 
-**Status: all planned views built: KPI cards and charts, Route explorer with explanation text, audit log, Isolation priority view (1 km grid zones with placeholder weights), Metrics table and Export page (CSV and JSON). Tamil and Hindi are draft translations. Ward boundaries and populations, facility verification and a demo recording are not done. All results are simulation outputs, not predictions.**
+**Status: all planned views built: KPI cards and charts, Route explorer with explanation text, audit log, Isolation priority view by ward (Census 2011 populations, 155-ward join), Metrics table and Export page (CSV and JSON). Tamil and Hindi are draft translations; a review checklist is in docs/TRANSLATION_REVIEW.md. Facility verification and a demo recording are not done. All results are simulation outputs, not predictions.**
 
 ## What it is not
 Not live data, not a flood predictor, not a dispatch system. Ambulance data is simulated. The facility list is a proxy and is not a clinical certification. Tamil and Hindi text are **draft translations** until reviewed.
@@ -45,3 +45,6 @@ Python note: the blueprint says 3.11; this machine has Python 3.13 only. The pin
 
 ## Interface style
 The interface follows a supplied reference dashboard image (floating icon rail with a round logo, large raised cards, pill toggles, KPI cards, 3 x 2 card grid) in a **blue** palette instead of the image's teal. A second reference website (shpp3.vercel.app) was reviewed and its thin-border style was not adopted. See blueprint Section 6.13.
+
+## Ward data (optional, enables population weights)
+Download two small public files into `data/raw/wards/` (not committed): `Wards-2008.geojson` from `github.com/datameet/Municipal_Spatial_Data` (folder `Chennai`, CC BY-SA 2.5 India) and the OpenCity "Chennai - Ward-wise Census Data - 2011" CSV saved as `census2011_ward.csv` (`data.opencity.in`, dataset `chennai-census-2011-data`). Then run `python scripts/build_wards.py` and re-run `build_phase3.py`, `build_metrics.py`, `build_routes.py`, `build_isolation.py`, `build_audit.py`. Without the files everything still works with a 1 km grid and placeholder weights.

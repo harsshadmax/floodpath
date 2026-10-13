@@ -32,7 +32,6 @@ EXTRA_LIMITS = [
     "The observed layer is a composite of OpenCity layers with no dates; it is not the 1-4 December 2015 peak and is not routed on.",
     "Edge thresholds (10% and 50% of length flooded), the 3x at-risk time multiplier and the 30-minute coverage threshold are assumptions, not standards.",
     "Travel times use free-flow speeds from OpenStreetMap, so they are comparative, not real response times.",
-    "Population weights are placeholders (equal weights); coverage is a share of sample points, not of people.",
     "Sample origins are seeded graph nodes in the largest connected road component; all are near flooded areas.",
     "Tamil and Hindi interface text are draft translations until reviewed by fluent speakers.",
 ]
@@ -54,16 +53,31 @@ def datasets(raw_manifest: Path = ROOT / "data" / "raw" / "manifest.json", roads
                 rows.append({"id": m["dataset"], "name": m["resource_name"], "url": m["url"], "file": m["file"],
                              "licence": "Dataset tagged Public Domain; portal says CC BY-NC-SA 4.0 and ODbL (conflict, see docs/SOURCES.md)",
                              "accessed": accessed, "kind": kind})
+    ward_dir = ROOT / "data" / "raw" / "wards"
+    if (ward_dir / "Wards-2008.geojson").exists():
+        wd = datetime.fromtimestamp((ward_dir / "Wards-2008.geojson").stat().st_mtime, timezone.utc).date().isoformat()
+        rows.append({"id": "D8", "name": "DataMeet Chennai ward polygons, 2008 scheme (155 wards)",
+                     "url": "https://github.com/datameet/Municipal_Spatial_Data/blob/master/Chennai/Wards-2008.geojson",
+                     "file": "Wards-2008.geojson", "licence": "CC BY-SA 2.5 India", "accessed": wd, "kind": "ward boundaries"})
+        rows.append({"id": "D7", "name": "OpenCity Chennai ward-wise Census 2011 data",
+                     "url": "https://data.opencity.in/dataset/chennai-census-2011-data",
+                     "file": "census2011_ward.csv", "licence": "Public Domain tag (OpenCity)", "accessed": wd, "kind": "ward population (2011)"})
     osm_date = datetime.fromtimestamp(roads.stat().st_mtime, timezone.utc).date().isoformat() if roads.exists() else None
     rows.append({"id": "OSM", "name": "OpenStreetMap drivable roads (today's roads, not 2015)", "url": "https://www.openstreetmap.org/copyright",
                  "file": "roads.graphml", "licence": "ODbL", "accessed": osm_date, "kind": "road network"})
     return rows
 
 
-def limits() -> Dict[str, object]:
+POPULATION_LIMITS = {
+    "placeholder": "Population weights are placeholders (equal weights); coverage is a share of sample points, not of people.",
+    "ward_census_2011": "Population is Census 2011 by ward (2008 ward boundaries), assumed evenly spread inside each ward and scaled to the part of the ward inside the study zone; it is old and approximate. Coverage weights each of the 20 sample origins by its ward's population.",
+}
+
+
+def limits(population_basis: str = "placeholder") -> Dict[str, object]:
     en = load_dictionary("en")
     return {"standing_gaps": [t(k, "en") for k in ("gap.facility_list", "gap.ambulance", "gap.peak", "gap.roads") if k in en],
-            "additional": EXTRA_LIMITS,
+            "additional": EXTRA_LIMITS + [POPULATION_LIMITS[population_basis]],
             "translation_status": {"ta": load_dictionary("ta")["_meta"]["status"], "hi": load_dictionary("hi")["_meta"]["status"]}}
 
 
@@ -91,7 +105,7 @@ def flood_layer_info(scenario: str, manifest: Dict[str, object], metrics: Option
 
 def build_audit(scenario: str, point: Dict[str, object], result: Optional[Dict[str, object]], metrics: Optional[Dict[str, object]],
                 flood_info: Dict[str, object], facility_rows: List[Dict[str, object]], excluded: List[Dict[str, str]],
-                cfg: Config = CONFIG) -> Dict[str, object]:
+                cfg: Config = CONFIG, population_basis: str = "placeholder") -> Dict[str, object]:
     """One audit document, without generated_at and ui_language (the browser fills those in)."""
     summary = None
     if metrics is not None:
@@ -110,6 +124,7 @@ def build_audit(scenario: str, point: Dict[str, object], result: Optional[Dict[s
         "facilities": {"used": facility_rows, "excluded": excluded},
         "result": result,
         "metrics": summary,
-        "limits": limits(),
+        "limits": limits(population_basis),
+        "population_basis": population_basis,
         "warnings": [],
     }

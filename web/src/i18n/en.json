@@ -188,5 +188,9 @@
   "export.isolation_csv": "Isolation ranking, all scenarios (CSV)",
   "export.audit_json": "Audit log for the current scenario and the chosen start (JSON)",
   "export.not_available": "Not available for the observed composite: choose a simulated scenario.",
-  "export.failed": "The file could not be created. Run the build scripts listed in the README."
+  "export.failed": "The file could not be created. Run the build scripts listed in the README.",
+  "iso.units_note_wards": "Units are Chennai's 155 wards (2008 boundaries) clipped to the study zone. Populations are Census 2011, assumed evenly spread inside each ward and scaled to the part of the ward inside the zone. Estimates are indicative.",
+  "iso.limit2_wards": "Population is Census 2011 (old), assumed evenly spread inside each ward; it is not where people are during a flood.",
+  "iso.basis_census": "Census 2011, scaled to the study zone",
+  "metrics.note_weighted": "Sample of {n} simulated origins, {runs} robustness runs. Coverage weights each origin by the Census 2011 population of its ward (scaled to the study zone), so it is an indicative share of people in the sample wards, not of the whole city. Not a prediction."
 }
