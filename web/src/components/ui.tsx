@@ -94,12 +94,14 @@ export function KpiCard({
   deltaTone,
   note,
   notBuilt,
+  spark,
 }: {
   label: string;
   value: string | null;
   delta?: string;
   deltaTone?: "good" | "bad";
   note?: string;
+  spark?: ReactNode;
   notBuilt: string;
 }) {
   return (
@@ -110,7 +112,7 @@ export function KpiCard({
       </div>
       <div className="fp-kpi-row">
         <span className="fp-kpi-value">{value ?? "—"}</span>
-        <EmptySparkline />
+        {spark ?? <EmptySparkline />}
       </div>
       <div className="fp-kpi-note">{value === null ? notBuilt : note}</div>
     </div>

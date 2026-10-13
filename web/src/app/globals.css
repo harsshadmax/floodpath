@@ -454,3 +454,22 @@ html[lang="hi"] .fp-caps {
   background: var(--blue-soft);
   color: var(--blue-dark);
 }
+
+/* ---------- charts (hand-built, PHASE 7) ---------- */
+.fp-chart { display: flex; flex-direction: column; gap: 10px; flex: 1; justify-content: center; }
+.fp-chart-group { display: flex; flex-direction: column; gap: 4px; }
+.fp-chart-group-title { font-size: 12px; font-weight: 600; color: var(--grey-title); }
+.fp-bar-row { display: grid; grid-template-columns: minmax(90px, 40%) 1fr 52px; align-items: center; gap: 8px; font-size: 12px; }
+.fp-bar-label { color: var(--text); overflow-wrap: anywhere; }
+.fp-bar-track { background: #eef0f2; border-radius: 99px; height: 10px; overflow: hidden; display: block; }
+.fp-bar-fill { display: block; height: 100%; border-radius: 99px; }
+.fp-bar-value { text-align: right; font-variant-numeric: tabular-nums; color: var(--blue-dark); font-weight: 600; }
+.fp-chart-note { font-size: 11px; color: var(--muted); text-align: center; margin: 4px 0 0; }
+.fp-stack-bar { display: flex; height: 22px; border-radius: 99px; overflow: hidden; background: #eef0f2; }
+.fp-stack-bar span { display: block; height: 100%; }
+.fp-legend { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.fp-legend li { display: flex; align-items: center; gap: 8px; }
+.fp-legend-n { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--muted); }
+.fp-swatch { width: 12px; height: 12px; border-radius: 4px; display: inline-block; flex: none; }
+.fp-table-compact th, .fp-table-compact td { padding: 6px 8px; font-size: 12px; }
+.fp-metrics-note { margin: 0 0 14px; font-size: 12px; color: var(--muted); }

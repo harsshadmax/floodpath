@@ -85,3 +85,25 @@ def route_origin(G: nx.MultiDiGraph, G2: nx.MultiDiGraph, origin: int, facilitie
         return res
     res.reachable, res.facility_id, res.time_min, res.path_nodes = True, fid, t, path
     return res
+
+
+def choose_facilities(G2: nx.MultiDiGraph, origins: List[int], facilities: pd.DataFrame) -> List[Optional[str]]:
+    """Facility chosen for each origin node on graph G2, using one search per facility on the reversed
+    graph (a handful of searches instead of one per origin). Same rule as route_origin: least travel
+    time, then verification rank, then facility_id. None where no suitable facility is reachable."""
+    R = G2.reverse(copy=False)
+    dist_by_fac = {}
+    for fac in facilities.itertuples(index=False):
+        dist_by_fac[fac.facility_id] = nx.single_source_dijkstra_path_length(R, fac.node_id, weight="travel_time") \
+            if fac.node_id in R else {}
+    rank = {f.facility_id: VERIFICATION_RANK.get(f.verification_status, 9) for f in facilities.itertuples(index=False)}
+    chosen: List[Optional[str]] = []
+    for o in origins:
+        best = None
+        for fid, dist in dist_by_fac.items():
+            if o in dist:
+                key = (dist[o], rank[fid], fid)
+                if best is None or key < best:
+                    best = key
+        chosen.append(None if best is None else best[2])
+    return chosen

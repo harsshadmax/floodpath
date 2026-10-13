@@ -1,13 +1,14 @@
 "use client";
-// PHASE 1 preview skeleton in the final layout. Overview and Route show translated "Not built yet"
-// placeholders; Data and limits is already real. No analysis result is shown anywhere yet.
+// Overview: map card, KPI cards and charts read data/web files written by the Python pipeline
+// (metrics.json from scripts/build_metrics.py). The Route explorer and the isolation card are not built.
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import config from "@/data/config.json";
-import { LANGS, LANG_LABELS, englishOriginal, normalizeLang, t, translationStatus, type Lang } from "@/lib/i18n";
+import { LANGS, LANG_LABELS, englishOriginal, fmtPct, normalizeLang, t, translationStatus, type Lang } from "@/lib/i18n";
+import { CoverageByScenario, EdgeClasses, ReachByFacility, Spark, TopOrigins, type MetricsFile } from "./Charts";
 import { DashboardIcon, InfoIcon, RouteIcon } from "./icons";
-import { Banner, Card, DatePill, KpiCard, Notice, Pills, Placeholder, Rail, type RailItem } from "./ui";
+import { Banner, Card, DatePill, KpiCard, Pills, Placeholder, Rail, type RailItem } from "./ui";
 
 // Leaflet touches `window`, so the map loads in the browser only.
 const RouteMap = dynamic(() => import("./RouteMap"), { ssr: false, loading: () => <div className="fp-placeholder" /> });
@@ -17,7 +18,7 @@ const SCENARIOS = ["observed", "mild", "moderate", "severe"] as const;
 type Scenario = (typeof SCENARIOS)[number];
 const FOCUS = ["reachability", "coverage", "time"] as const;
 type Focus = (typeof FOCUS)[number];
-const KPI_KEYS = ["kpi.time_increase", "kpi.feasibility", "kpi.reachability", "kpi.coverage", "kpi.robustness"];
+const SIM_ORDER = ["mild", "moderate", "severe"] as const;
 const GAP_KEYS = ["gap.facility_list", "gap.ambulance", "gap.peak", "gap.roads"];
 
 export default function Dashboard() {
@@ -28,8 +29,15 @@ export default function Dashboard() {
   // The first scenario can be set with ?scenario=severe (used for previews and shared links).
   const [scenario, setScenario] = useState<Scenario>(() => {
     const requested = searchParams.get("scenario");
-    return (SCENARIOS as readonly string[]).includes(requested ?? "") ? (requested as Scenario) : "observed";
+    return (SCENARIOS as readonly string[]).includes(requested ?? "") ? (requested as Scenario) : "moderate";
   });
+  const [metrics, setMetrics] = useState<MetricsFile | null | "missing">(null);
+  useEffect(() => {
+    fetch("/data/metrics.json")
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then(setMetrics)
+      .catch(() => setMetrics("missing"));
+  }, []);
   const [focus, setFocus] = useState<Focus>("reachability");
 
   // The language lives in the page address (?lang=ta), so a shared link opens in that language
@@ -47,6 +55,48 @@ export default function Dashboard() {
   };
 
   const T = (key: string, params?: Record<string, string | number>) => t(lang, key, params);
+  const m = metrics && metrics !== "missing" ? metrics : null;
+  const sm = m && scenario !== "observed" ? m.scenarios[scenario] : null;
+  const sparkOf = (pick: (x: MetricsFile["scenarios"][string]) => number | null) =>
+    m ? <Spark values={SIM_ORDER.map((s) => pick(m.scenarios[s]))} selected={SIM_ORDER.indexOf(scenario as (typeof SIM_ORDER)[number])} /> : undefined;
+  const offNote = scenario === "observed" ? T("kpi.not_routed") : metrics === "missing" ? T("state.metrics_missing") : T("state.not_built");
+  const kpis = [
+    {
+      key: "kpi.time_increase",
+      value: sm && sm.m1_time_increase_min.mean !== null ? `+${sm.m1_time_increase_min.mean.toFixed(1)} ${T("unit.minutes")}` : null,
+      note: sm && sm.m1_time_increase_min.mean !== null ? T("kpi.note_time", { n: sm.m1_time_increase_min.n, max: sm.m1_time_increase_min.max ?? 0 }) : undefined,
+      none: sm ? T("kpi.note_time_none") : offNote,
+      spark: sparkOf((x) => x.m1_time_increase_min.mean),
+    },
+    {
+      key: "kpi.feasibility",
+      value: sm ? fmtPct(sm.m2_false_route_rate) : null,
+      note: T("kpi.note_feasibility"),
+      none: offNote,
+      spark: sparkOf((x) => x.m2_false_route_rate),
+    },
+    {
+      key: "kpi.reachability",
+      value: sm ? fmtPct(sm.m3_reach_any) : null,
+      note: sm ? T("kpi.note_reach", { n: Math.round(sm.m3_reach_any * sm.n_origins), total: sm.n_origins }) : undefined,
+      none: offNote,
+      spark: sparkOf((x) => x.m3_reach_any),
+    },
+    {
+      key: "kpi.coverage",
+      value: sm ? fmtPct(sm.m4_coverage_flood_aware) : null,
+      note: sm ? T("kpi.note_coverage", { min: sm.coverage_threshold_min, conv: fmtPct(sm.m4_coverage_conventional) }) : undefined,
+      none: offNote,
+      spark: sparkOf((x) => x.m4_coverage_flood_aware),
+    },
+    {
+      key: "kpi.robustness",
+      value: sm ? fmtPct(sm.robustness.overall) : null,
+      note: sm ? T("kpi.note_robust", { pct: fmtPct(sm.robustness.share_changed_at_least_once), runs: sm.robustness.runs }) : undefined,
+      none: offNote,
+      spark: sparkOf((x) => x.robustness.overall),
+    },
+  ];
   const kind = scenario === "observed" ? T("badge.composite") : T("badge.simulated");
   const caption = `${T("scenario." + scenario)}  |  ${kind}`;
 
@@ -104,10 +154,10 @@ export default function Dashboard() {
 
         {page === "overview" && (
           <>
-            <Notice text={T("app.skeleton_notice")} />
+            <p className="fp-metrics-note">{T("note.indicative_metrics")}</p>
             <div className="fp-grid-kpi">
-              {KPI_KEYS.map((key) => (
-                <KpiCard key={key} label={T(key)} value={null} notBuilt={T("state.not_built")} />
+              {kpis.map((k) => (
+                <KpiCard key={k.key} label={T(k.key)} value={k.value} note={k.note} notBuilt={k.none} spark={k.spark} />
               ))}
             </div>
             <div className="fp-grid-cards">
@@ -116,8 +166,18 @@ export default function Dashboard() {
                   <Card key={key} title={T(key)} caption={caption}>
                     {key === "card.map" ? (
                       <RouteMap scenario={scenario} lang={lang} />
+                    ) : key === "card.isolation_top" ? (
+                      <Placeholder text={T("state.planned_not_built")} />
+                    ) : key === "card.coverage_by_scenario" && m ? (
+                      <CoverageByScenario lang={lang} metrics={m} />
+                    ) : key === "card.edge_classes" && sm ? (
+                      <EdgeClasses lang={lang} m={sm} />
+                    ) : key === "card.reach_by_facility" && sm && m ? (
+                      <ReachByFacility lang={lang} m={sm} metrics={m} />
+                    ) : key === "card.top_origins" && sm ? (
+                      <TopOrigins lang={lang} m={sm} />
                     ) : (
-                      <Placeholder text={T("state.not_built")} />
+                      <Placeholder text={key === "card.coverage_by_scenario" ? offNote : scenario === "observed" ? T("kpi.not_routed") : offNote} />
                     )}
                   </Card>
                 ),

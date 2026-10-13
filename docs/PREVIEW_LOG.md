@@ -39,3 +39,10 @@ One entry per preview checkpoint (blueprint Section 14.12). Screenshots are take
 ## 2026-10-13: PHASE 3 (no new screenshot; the dashboard UI is unchanged except the map now shows the redesigned scenario layers)
 - **Real:** edge classification, flood-modified graph, routing with unreachable handling, facilities and simulated starts, 61 passing tests.
 - **User decision:** option 1 (seeded subset scenarios) after the buffered scenarios isolated every facility.
+
+## 2026-10-13: CP-4 (PHASE 7): KPI cards and charts with real values
+- **Shown:** `docs/previews/cp4_moderate_en.png`, `cp4_mild_ta.png`, `cp4_severe_en.png`, `cp4_observed_hi.png` (1440 px, headless Edge against the running dev server). I opened the English moderate, Tamil mild and Hindi observed captures; the English severe one was captured but not opened.
+- **Real:** five KPI cards with sparklines across mild, moderate, severe; coverage by scenario (C2), road segments by class (C4), reachability by facility (C5), origins by travel-time increase (C6). Default scenario is now moderate.
+- **Placeholder / not built:** isolation card (C3, "Planned, not built"), Route explorer page, explanation text, audit download.
+- **Honest limits:** observed composite shows a "not routed on" message instead of numbers; severe shows 0% reachability everywhere (cliff effect, see docs/DATA_LIMITS.md); travel-time increase is empty for moderate and severe; Tamil and Hindi are drafts.
+- **User decision:** pending.

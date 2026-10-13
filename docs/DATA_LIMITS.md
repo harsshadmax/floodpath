@@ -45,3 +45,21 @@ See `SOURCES.md`: OpenCity's dataset-level Public Domain tag versus its portal-w
 - **Ambulance starts:** 6 seeded points, all labelled simulated (`data/ambulance_starts.csv`).
 - **Speed:** classifying 30,403 edges took 106 s against the whole flood polygon; cutting the polygon into 400 m grid pieces made it a few seconds.
 - **Not yet done:** metrics K1 to K5, robustness runs, explanation text, audit log, route explorer and the KPI cards are still to build.
+
+## PHASE 7 findings (2026-10-13): metrics and KPI cards
+Computed by `scripts/build_metrics.py` for the 3 simulated scenarios on 20 seeded sample origins and the 3 on-graph facilities (all unverified). The observed composite is not routed on.
+
+| Metric | Mild (10% of reports) | Moderate (20%) | Severe (35%) |
+|---|---|---|---|
+| Travel-time increase (origins with both routes) | +0.19 min mean, 0.96 max (5 origins) | none (no origin has a drivable conventional route and a flood-aware route) | none |
+| Conventional routes crossing a blocked road | 75% | 100% | 100% |
+| Origins reaching a facility | 95% (19 of 20) | 95% | 0% |
+| Coverage within 30 min, flood-aware (conventional) | 95% (25%) | 85% (0%) | 0% (0%) |
+| Routing robustness (50 runs) | 44.9% | 41.7% | 43.6% |
+
+How to read these:
+- **Cliff, not a gradient.** Reachability depends on whether one or two road segments next to a facility node are blocked. In moderate, only F01 (Purasaiwalkam) is reachable (95%) while F02 and F03 are cut off; in severe all three are. A 35% subset is therefore not "worse by a smooth amount"; it crosses a threshold.
+- **Robustness is low (42 to 45%).** The robustness runs draw the share of reports kept between 5% and 40%, which spans the cliff, so origins often change facility. This measures sensitivity to the assumed flood extent under this simplified design; it is not a measure of routing quality.
+- **Conventional routes look worse than they are.** The 100% false-route rate and 0% conventional coverage in moderate and severe come from sample origins that are all within 300 m of flooded areas and from a network where a single blocked edge breaks a route. Origins elsewhere in the city were not sampled.
+- **Coverage is a share of sample points, not of people** (placeholder weights; ward population join skipped).
+- **Free-flow speeds**, so minutes are comparative, not real response times (assumption A-05).
