@@ -75,5 +75,20 @@
   "expl.baseline_blocked": "The conventional route to {baseline_facility} crosses {n_blocked} blocked road segment(s) under the {scenario} scenario, so it is not drivable.",
   "expl.reachable_longer": "The nearest reachable facility offering {service} is {facility}, {time} minutes away, {delta} minutes longer than the conventional route.",
   "expl.reachable_shorter": "The nearest reachable facility offering {service} is {facility}, {time} minutes away, {delta} minutes shorter than the conventional route.",
-  "expl.unreachable_all": "No suitable facility is reachable from this origin under the {scenario} scenario."
+  "expl.unreachable_all": "No suitable facility is reachable from this origin under the {scenario} scenario.",
+  "state.not_built": "Not built yet",
+  "app.skeleton_notice": "Preview skeleton: layout only, no data yet.",
+  "page.data.gaps_title": "Standing data gaps",
+  "page.data.original_english": "Original English",
+  "page.data.translation_status": "Translation status",
+  "page.data.assumptions_title": "Assumptions in effect",
+  "page.data.datasets_title": "Datasets",
+  "status.draft": "Draft (not yet reviewed)",
+  "status.reviewed": "Reviewed",
+  "table.dataset": "Dataset",
+  "table.licence": "Licence note",
+  "table.type": "Type",
+  "table.parameter": "Parameter",
+  "table.value": "Value",
+  "page.route.title": "Route explorer"
 }

@@ -1,0 +1,29 @@
+# Preview log
+
+One entry per preview checkpoint (blueprint Section 14.12). Screenshots are taken from the running app in a browser pane; none is a mockup.
+
+## 2026-10-13: PHASE 1 skeleton preview (before CP-2)
+- **Shown:** the preview skeleton at 1440 px width, Overview page in English, Tamil and Hindi; the Data and limits page in Hindi (Tamil and English load without errors in the smoke tests but were not photographed on that page).
+- **Real:** layout, teal theme, left rail (sidebar with Material icons), header, language selector (English, தமிழ், हिन्दी), event pill, scenario and focus controls, the persistent simulation banner, five KPI card frames, six overview card frames, the Data and limits page (four standing gaps with an "original English" line, datasets table, assumptions table, translation status).
+- **Placeholder:** every KPI value and chart ("Not built yet"); the Route explorer page.
+- **Checks:** banner visible in all three languages; Tamil and Hindi render with no missing-glyph boxes on this machine; long Tamil labels wrap and are not truncated.
+- **Found and fixed during the preview:** the default Streamlit red and black widget theme clashed with the teal design (fixed with `.streamlit/config.toml`); the scenario control was cut off at narrow widths (moved to its own full-width row).
+- **Known limits:** the left rail is a standard sidebar with icons and labels, not an icon-only rail (accepted fallback, blueprint 6.2); cards in one row can have unequal heights when captions wrap.
+- **User decision:** the user asked for the look of the reference image (twice), then asked to use Next.js, then supplied a reference website (shpp3.vercel.app) and chose the "blend" style. The Streamlit skeleton was replaced (see next entry).
+
+## 2026-10-13: PHASE 1 skeleton in Next.js, final style (supersedes the blend entry below)
+- **User decision:** after the blend preview the user sent the reference image again and asked for "front ui/ux like this and blue color palette". The interface was restyled to the image's look (floating rail with a round blue logo, raised 24 px cards, dark and pale pill toggles with a blue selected state, large grey title, event pill top right) with a blue accent. The thin-border website style was dropped.
+- **Shown:** Overview in English, Tamil and Hindi at 1440 px, captured with a separate headless browser against the running dev server (the in-app pane's capture of an emulated 1440 px viewport came out scaled into a corner, so it was not used). The pane at its own narrow width was also checked.
+- **Found and fixed:** the header controls first stacked down the left side instead of sitting top-right opposite the title; the right-hand group is now flexible so long Tamil labels wrap without crowding.
+- **Real vs placeholder:** unchanged from the entry below (layout, theme, language switch and the Data and limits page are real; every KPI value and chart is "Not built yet").
+- **Not yet checked at this style:** the Data and limits page and the Route explorer page (checked only before the restyle), and any width between the narrow pane and 1440 px.
+- **User decision:** pending (commit of PHASE 1).
+
+## 2026-10-13: PHASE 1 skeleton in Next.js, blend style (earlier iteration)
+- **Reference website reviewed:** shpp3.vercel.app ("Project 96", an unrelated registry app) was used only as a styling reference. Its demo dashboard did not load ("Unable to load demo dashboard"), and its login shows demo credentials on the page; none were entered. Styling values were read from the public login screen's computed styles.
+- **Shown:** `http://localhost:3000` at 1440 px: Overview in English and Tamil; the Data and limits page in Hindi.
+- **Real:** icon rail with logo, header (title, scenario and language segmented controls, event pill, focus toggle), persistent simulation banner, five KPI card frames, six card frames in an equal 3 x 2 grid, the Data and limits page (gaps with "original English", datasets, assumptions, translation status).
+- **Placeholder:** all KPI values, charts and the Route explorer ("Not built yet"); the dashed lines in the KPI cards are decorative, not data.
+- **Checks:** `tsc --noEmit`, `npm run lint` and `npm run build` pass; Tamil and Hindi render without missing-glyph boxes; Tamil labels wrap and the header re-flows; 35 Python tests pass (dictionary and config sync with the web copies included).
+- **Known limits:** the Hindi page was looked at in a small screenshot; Route explorer is a placeholder; the Next.js dev indicator shows in the corner in development only; fonts need an internet download once.
+- **User decision:** pending (commit of PHASE 1, study zone, blend style).

@@ -22,9 +22,14 @@ class ConfigError(ValueError):
 
 @dataclass(frozen=True)
 class Config:
-    # Study area: a place name or polygon for OSMnx. Set in PHASE 1 after inspecting the flood data.
-    # Pick a small Chennai zone containing flood points and at least 3 candidate facilities.
-    STUDY_AREA: Optional[str] = None
+    # Study area. Chosen in PHASE 1 by scripts/choose_zone.py: central Chennai, 70 km2, contains 3 of the
+    # 5 GCC emergency obstetric units (Shenoy Nagar, Saidapet, Purasaiwalkam), 217 stagnation points,
+    # 87 GCC hotspots, 2139 crowd-sourced flooded street segments, and about 39% of its area lies inside
+    # the NRSC inundation polygons. The zone is a decision the user can change at the first preview.
+    STUDY_AREA: Optional[str] = "Central Chennai (Saidapet, Shenoy Nagar, Purasaiwalkam)"
+    # West, south, east, north in degrees. Build a polygon from this for OSMnx (avoids bbox argument-order
+    # changes between OSMnx versions).
+    STUDY_BBOX: Optional[Tuple[float, float, float, float]] = (80.205, 13.010, 80.270, 13.100)
 
     CRS_GEO: str = "EPSG:4326"
     CRS_METRIC: str = "EPSG:32644"  # UTM zone 44N covers Chennai
@@ -36,6 +41,8 @@ class Config:
 
     # Flood layers (A-04, A-09). Negative buffers shrink the extent.
     POINT_BUFFER_M: float = 75.0
+    # The crowd-sourced layer is LineStrings (flooded street segments), not points (found in PHASE 1).
+    LINE_BUFFER_M: float = 25.0  # A-22: roughly a road width plus margin
     SCENARIO_BUFFER_M: Tuple[Tuple[str, float], ...] = (
         ("mild", -100.0),
         ("moderate", 0.0),
@@ -89,8 +96,8 @@ def validate_config(cfg: Config, require_study_area: bool = False) -> Config:
         )
     if cfg.AT_RISK_TIME_MULTIPLIER < 1:
         raise ConfigError("AT_RISK_TIME_MULTIPLIER", "must be at least 1")
-    if cfg.POINT_BUFFER_M <= 0:
-        raise ConfigError("POINT_BUFFER_M", "must be positive")
+    if cfg.POINT_BUFFER_M <= 0 or cfg.LINE_BUFFER_M <= 0:
+        raise ConfigError("POINT_BUFFER_M", "POINT_BUFFER_M and LINE_BUFFER_M must be positive")
     names = [name for name, _ in cfg.SCENARIO_BUFFER_M]
     if names != ["mild", "moderate", "severe"]:
         raise ConfigError("SCENARIO_BUFFER_M", "must list mild, moderate, severe in that order")
@@ -124,8 +131,14 @@ def validate_config(cfg: Config, require_study_area: bool = False) -> Config:
         raise ConfigError("ISOLATION_TOP_K", "ISOLATION_TOP_K and MIN_ELIGIBLE_NODES_PER_UNIT must be >= 1")
     if cfg.DEFAULT_LANGUAGE not in cfg.SUPPORTED_LANGUAGES:
         raise ConfigError("DEFAULT_LANGUAGE", "must be one of SUPPORTED_LANGUAGES")
-    if require_study_area and not cfg.STUDY_AREA:
-        raise ConfigError("STUDY_AREA", "set STUDY_AREA before building the road graph")
+    if cfg.STUDY_BBOX is not None:
+        w, s, e, n = cfg.STUDY_BBOX
+        if not (w < e and s < n):
+            raise ConfigError("STUDY_BBOX", "need west < east and south < north")
+        if not (79.5 <= w and e <= 80.6 and 12.5 <= s and n <= 13.6):
+            raise ConfigError("STUDY_BBOX", "must lie inside the Chennai region (79.5-80.6 E, 12.5-13.6 N)")
+    if require_study_area and not (cfg.STUDY_AREA and cfg.STUDY_BBOX):
+        raise ConfigError("STUDY_BBOX", "set STUDY_AREA and STUDY_BBOX before building the road graph")
     return cfg
 
 

@@ -1,0 +1,77 @@
+{
+  "study": {
+    "name": "Central Chennai (Saidapet, Shenoy Nagar, Purasaiwalkam)",
+    "bbox": [
+      80.205,
+      13.01,
+      80.27,
+      13.1
+    ]
+  },
+  "assumptions": [
+    {
+      "name": "FLOOD_FRACTION_AT_RISK",
+      "value": 0.1
+    },
+    {
+      "name": "FLOOD_FRACTION_BLOCKED",
+      "value": 0.5
+    },
+    {
+      "name": "AT_RISK_TIME_MULTIPLIER",
+      "value": 3.0
+    },
+    {
+      "name": "POINT_BUFFER_M",
+      "value": 75.0
+    },
+    {
+      "name": "LINE_BUFFER_M",
+      "value": 25.0
+    },
+    {
+      "name": "SCENARIO_BUFFER_M",
+      "value": {
+        "mild": -100.0,
+        "moderate": 0.0,
+        "severe": 150.0
+      }
+    },
+    {
+      "name": "COVERAGE_THRESHOLD_MIN",
+      "value": 30.0
+    },
+    {
+      "name": "N_ORIGINS",
+      "value": 20
+    },
+    {
+      "name": "ROBUSTNESS_RUNS",
+      "value": 50
+    },
+    {
+      "name": "RANDOM_SEED",
+      "value": 42
+    }
+  ],
+  "datasets": [
+    {
+      "id": "D1",
+      "name": "OpenCity Chennai Floods 2015 (7 KML files)",
+      "typeKey": "badge.composite",
+      "licence": "Dataset tagged Public Domain; portal says CC BY-NC-SA 4.0 and ODbL (conflict)"
+    },
+    {
+      "id": "D5",
+      "name": "OpenCity Chennai Maternity Hospitals Map (5 points)",
+      "typeKey": null,
+      "licence": "Public Domain tag; same portal-level conflict"
+    },
+    {
+      "id": "D4",
+      "name": "OpenStreetMap roads (PHASE 2)",
+      "typeKey": null,
+      "licence": "ODbL: credit OpenStreetMap contributors"
+    }
+  ]
+}

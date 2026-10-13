@@ -3,8 +3,10 @@
 Source of truth: `blueprint.md` (v2.1). This run follows `docs/PLAN_2H.md` (2-hour cut). The blueprint's honesty and data rules still apply in full; only scope and process are cut.
 
 ## Stack and limits
-- Python (the blueprint says 3.11; this machine has 3.13, see README); osmnx, networkx, geopandas, shapely, numpy, pandas, streamlit, streamlit-folium, folium, altair (installed with Streamlit), pytest only.
-- No database, Docker, LLM calls, or custom JavaScript components.
+- **Stack change (user decision, 2026-10-13):** the interface is a **Next.js** app in `web/` (TypeScript, Tailwind, App Router). Streamlit is being replaced and must not be extended. This overrides the blueprint's Python-only rule; blueprint Sections 4, 6 and 14 describe Streamlit and are to be read with this change (see `docs/PLAN_2H.md`).
+- **Python** (blueprint says 3.11; this machine has 3.13) keeps all analysis: osmnx, networkx, geopandas, shapely, numpy, pandas, pytest. The Python code writes precomputed JSON/GeoJSON into `web/public/data/`; the Next.js app only reads those files. No live API server, no FastAPI.
+- Charts are hand-built SVG components in the reference dashboard's style (no chart library). The map uses Leaflet.
+- No database, Docker, or LLM calls.
 - Do not download any file over 100 MB without asking.
 - Keep raw third-party data out of git (`data/raw/` is ignored); commit download scripts instead. Never commit any UNOSAT file.
 - One small Chennai zone; each step should run in under 30 seconds.

@@ -54,10 +54,36 @@ def test_scenario_names_must_be_in_order():
         validate_config(replace(CONFIG, SCENARIO_BUFFER_M=bad))
 
 
-def test_study_area_required_only_when_asked():
+def test_study_zone_is_set_and_valid():
     assert isinstance(CONFIG, Config)
-    assert CONFIG.STUDY_AREA is None
-    validate_config(CONFIG)  # fine in PHASE 0
+    assert CONFIG.STUDY_AREA and CONFIG.STUDY_BBOX
+    w, s, e, n = CONFIG.STUDY_BBOX
+    assert w < e and s < n
+    validate_config(CONFIG, require_study_area=True)
+
+
+def test_study_area_required_only_when_asked():
+    unset = replace(CONFIG, STUDY_AREA=None, STUDY_BBOX=None)
+    validate_config(unset)  # allowed until the road graph is built
     with pytest.raises(ConfigError) as err:
-        validate_config(CONFIG, require_study_area=True)
-    assert err.value.key == "STUDY_AREA"
+        validate_config(unset, require_study_area=True)
+    assert err.value.key == "STUDY_BBOX"
+
+
+@pytest.mark.parametrize(
+    "bbox",
+    [
+        (80.27, 13.01, 80.205, 13.10),  # west after east
+        (80.205, 13.10, 80.27, 13.01),  # south after north
+        (70.0, 13.0, 71.0, 13.1),  # outside the Chennai region
+    ],
+)
+def test_bad_study_bbox_rejected(bbox):
+    with pytest.raises(ConfigError) as err:
+        validate_config(replace(CONFIG, STUDY_BBOX=bbox))
+    assert err.value.key == "STUDY_BBOX"
+
+
+def test_line_buffer_must_be_positive():
+    with pytest.raises(ConfigError):
+        validate_config(replace(CONFIG, LINE_BUFFER_M=0))

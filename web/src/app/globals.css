@@ -1,0 +1,405 @@
+@import "tailwindcss";
+
+/*
+  FloodPath-Care dashboard theme: modelled on the supplied reference "Executive Dashboard" image
+  (user request, 2026-10-13): light-grey page, large raised white cards with soft shadows, a floating
+  rounded rail with a round logo, dark-grey pill toggles with a selected accent, KPI cards with a
+  trend area. The accent is BLUE instead of the image's teal (user request). Colours approximate the
+  image by eye (assumption A-21); they are not sampled values.
+  Data colours are separate from the accent so a flood layer never looks like a UI control.
+*/
+:root {
+  --page-1: #e7e9eb;
+  --page-2: #f4f5f6;
+  --card: #ffffff;
+  --blue: #1e64b4; /* accent: selected controls, KPI values, flood-aware values (white-on-blue contrast about 6:1) */
+  --blue-dark: #174e8f; /* small text */
+  --blue-deep: #0f3f77;
+  --blue-soft: #e1ecf8;
+  --grey-dark: #555b61; /* dark pills, conventional values, ticks */
+  --grey-title: #5c6166;
+  --flood: #5bb5e0; /* flood layer: a lighter cyan-blue, distinct from the UI accent */
+  --at-risk: #e08a1e;
+  --blocked: #c0392b;
+  --good: #1b7f5c;
+  --bad: #c0392b;
+  --text: #1d2a33;
+  --muted: #5b6770;
+  --line: #c9cfd4;
+  --banner-bg: #fff4d6;
+  --banner-border: #e0b33a;
+  --raised: 8px 8px 18px rgba(163, 170, 180, 0.45), -6px -6px 14px rgba(255, 255, 255, 0.9);
+  --raised-small: 4px 4px 9px rgba(163, 170, 180, 0.45), -3px -3px 7px rgba(255, 255, 255, 0.9);
+  --inset: inset 2px 2px 5px rgba(163, 170, 180, 0.55), inset -2px -2px 5px rgba(255, 255, 255, 0.9);
+  /* Inter has no Tamil or Devanagari glyphs; Noto and Nirmala UI cover them (blueprint I18N-7). */
+  --font-ui: var(--font-inter), "Inter", "Noto Sans Tamil", "Noto Sans Devanagari", "Nirmala UI", "Segoe UI", Arial, sans-serif;
+}
+
+@theme inline {
+  --font-sans: var(--font-ui);
+}
+
+html,
+body {
+  min-height: 100%;
+}
+body {
+  margin: 0;
+  background: linear-gradient(135deg, var(--page-1), var(--page-2)) fixed;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Letter-spacing and forced capitals break Tamil and Devanagari shaping: switch them off there. */
+html[lang="ta"] .fp-caps,
+html[lang="hi"] .fp-caps {
+  letter-spacing: normal !important;
+  text-transform: none !important;
+}
+.fp-mono {
+  font-family: var(--font-ui);
+}
+
+/* ---------- shell ---------- */
+.fp-shell {
+  display: flex;
+  gap: 24px;
+  padding: 16px 28px 36px 16px;
+  min-height: 100vh;
+}
+.fp-main {
+  flex: 1;
+  min-width: 0;
+  max-width: 1600px;
+}
+
+/* ---------- floating icon rail with a round logo ---------- */
+.fp-rail {
+  position: sticky;
+  top: 16px;
+  align-self: flex-start;
+  width: 92px;
+  height: calc(100vh - 32px);
+  background: var(--card);
+  border-radius: 46px;
+  box-shadow: var(--raised);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 22px 0 20px 0;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.fp-logo {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 30px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--blue), var(--blue-deep));
+  box-shadow: var(--raised-small);
+  margin-bottom: 16px;
+}
+.fp-rail-sep {
+  width: 44px;
+  height: 1px;
+  background: var(--line);
+  margin: 14px 0;
+}
+.fp-rail-spacer {
+  flex: 1;
+}
+.fp-rail-btn {
+  width: 60px;
+  height: 60px;
+  border: none;
+  border-radius: 18px;
+  background: transparent;
+  color: #6f7b83;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.fp-rail-btn:hover {
+  background: #f0f2f3;
+}
+.fp-rail-btn[aria-current="page"] {
+  color: var(--blue);
+  background: var(--blue-soft);
+}
+.fp-rail-btn:focus-visible,
+.fp-pill-btn:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 2px;
+}
+.fp-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* ---------- header ---------- */
+.fp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.fp-header-left {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.fp-title {
+  font-size: 46px;
+  font-weight: 500;
+  color: var(--grey-title);
+  line-height: 1.1;
+  margin: 0;
+}
+.fp-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin: 6px 0 0 0;
+}
+.fp-scenario-row {
+  margin: 0;
+}
+.fp-header-right {
+  flex: 1 1 480px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+.fp-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.fp-row-right {
+  justify-content: flex-end;
+}
+.fp-date-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 20px;
+  border-radius: 999px;
+  background: #e4e7e9;
+  box-shadow: var(--inset);
+  font-size: 13px;
+}
+
+/* Pill toggles: dark pills (focus), light pills (language, scenario); the selected pill is blue */
+.fp-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.fp-pill-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 22px;
+  min-height: 38px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--raised-small);
+}
+.fp-pills-dark .fp-pill-btn {
+  background: var(--grey-dark);
+  color: #fff;
+}
+.fp-pills-light .fp-pill-btn {
+  background: #eceff1;
+  color: var(--grey-dark);
+}
+.fp-pill-btn[aria-pressed="true"] {
+  background: var(--blue);
+  color: #fff;
+}
+
+/* ---------- banner and notices ---------- */
+.fp-banner {
+  background: var(--banner-bg);
+  border: 1px solid var(--banner-border);
+  border-radius: 16px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 8px 0 16px 0;
+  overflow-wrap: anywhere;
+}
+.fp-notice {
+  background: var(--blue-soft);
+  border-radius: 16px;
+  padding: 10px 18px;
+  font-size: 14px;
+  color: var(--blue-deep);
+  margin-bottom: 16px;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- cards ---------- */
+.fp-card {
+  background: var(--card);
+  border-radius: 24px;
+  box-shadow: var(--raised);
+  padding: 16px 20px 20px 20px;
+  min-width: 0;
+}
+.fp-card-title {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 2px 0;
+  overflow-wrap: anywhere;
+}
+.fp-card-caption {
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 8px 0;
+  overflow-wrap: anywhere;
+}
+.fp-placeholder {
+  border: 2px dashed var(--line);
+  border-radius: 16px;
+  min-height: 176px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 12px;
+  color: var(--muted);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.fp-grid-kpi {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 22px;
+  margin-bottom: 22px;
+}
+.fp-grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 22px;
+}
+@media (min-width: 1150px) {
+  .fp-grid-kpi {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  .fp-grid-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ---------- KPI cards ---------- */
+.fp-kpi-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  min-height: 18px;
+}
+.fp-kpi-label {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.fp-kpi-delta {
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.fp-kpi-delta.good {
+  color: var(--good);
+}
+.fp-kpi-delta.bad {
+  color: var(--bad);
+}
+.fp-kpi-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+.fp-kpi-value {
+  font-size: 36px;
+  font-weight: 500;
+  color: var(--blue);
+  line-height: 1.15;
+}
+.fp-kpi-note {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- data page ---------- */
+.fp-h2 {
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--grey-title);
+  margin: 24px 0 12px 0;
+}
+.fp-original {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 6px 0 0 0;
+  overflow-wrap: anywhere;
+}
+.fp-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.fp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.fp-table th,
+.fp-table td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e3e6e8;
+  overflow-wrap: anywhere;
+  vertical-align: top;
+}
+.fp-table th {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 12px;
+}
+.fp-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--blue-soft);
+  color: var(--blue-dark);
+}

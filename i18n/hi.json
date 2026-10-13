@@ -75,5 +75,20 @@
   "expl.baseline_blocked": "{scenario} परिदृश्य में {baseline_facility} तक का पारंपरिक मार्ग {n_blocked} अवरुद्ध सड़क खंड(ों) से गुज़रता है, इसलिए उस पर वाहन नहीं चलाया जा सकता।",
   "expl.reachable_longer": "{service} प्रदान करने वाली निकटतम पहुँच योग्य सुविधा {facility} है, जो {time} मिनट दूर है, पारंपरिक मार्ग से {delta} मिनट अधिक।",
   "expl.reachable_shorter": "{service} प्रदान करने वाली निकटतम पहुँच योग्य सुविधा {facility} है, जो {time} मिनट दूर है, पारंपरिक मार्ग से {delta} मिनट कम।",
-  "expl.unreachable_all": "{scenario} परिदृश्य में इस आरंभ बिंदु से कोई उपयुक्त सुविधा पहुँच योग्य नहीं है।"
+  "expl.unreachable_all": "{scenario} परिदृश्य में इस आरंभ बिंदु से कोई उपयुक्त सुविधा पहुँच योग्य नहीं है।",
+  "state.not_built": "अभी बनाया नहीं गया",
+  "app.skeleton_notice": "प्रीव्यू ढाँचा: केवल लेआउट, अभी कोई डेटा नहीं।",
+  "page.data.gaps_title": "स्थायी डेटा अंतराल",
+  "page.data.original_english": "अंग्रेज़ी मूल",
+  "page.data.translation_status": "अनुवाद की स्थिति",
+  "page.data.assumptions_title": "लागू मान्यताएँ",
+  "page.data.datasets_title": "डेटासेट",
+  "status.draft": "मसौदा (अभी समीक्षा नहीं हुई)",
+  "status.reviewed": "समीक्षित",
+  "table.dataset": "डेटासेट",
+  "table.licence": "लाइसेंस नोट",
+  "table.type": "प्रकार",
+  "table.parameter": "पैरामीटर",
+  "table.value": "मान",
+  "page.route.title": "मार्ग अन्वेषक"
 }

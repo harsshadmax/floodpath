@@ -1,12 +1,10 @@
-﻿altair==6.3.0
-anyio==4.15.1
+﻿anyio==4.15.1
 attrs==26.1.0
 branca==0.8.2
 certifi==2026.7.22
 charset-normalizer==3.5.2
 click==8.5.0
 colorama==0.4.6
-folium==0.20.0
 geopandas==1.2.0
 h11==0.16.0
 httptools==0.9.0
@@ -40,8 +38,6 @@ rpds-py==2026.9.1
 shapely==2.2.0
 six==1.17.0
 starlette==1.8.0
-streamlit==1.65.0
-streamlit-folium==0.27.4
 toml==0.10.2
 typing_extensions==4.16.0
 tzdata==2026.5

@@ -75,5 +75,20 @@
   "expl.baseline_blocked": "{scenario} சூழ்நிலையில், {baseline_facility} நோக்கிய வழக்கமான வழித்தடம் {n_blocked} தடைபட்ட சாலைப் பகுதி(களை) கடக்கிறது; எனவே அதில் பயணிக்க இயலாது.",
   "expl.reachable_longer": "{service} வழங்கும், அடையக்கூடிய அருகிலுள்ள வசதி {facility}; இது {time} நிமிடங்கள் தொலைவில் உள்ளது, வழக்கமான வழித்தடத்தை விட {delta} நிமிடங்கள் அதிகம்.",
   "expl.reachable_shorter": "{service} வழங்கும், அடையக்கூடிய அருகிலுள்ள வசதி {facility}; இது {time} நிமிடங்கள் தொலைவில் உள்ளது, வழக்கமான வழித்தடத்தை விட {delta} நிமிடங்கள் குறைவு.",
-  "expl.unreachable_all": "{scenario} சூழ்நிலையில் இந்தத் தொடக்கப் புள்ளியிலிருந்து பொருத்தமான எந்த வசதியையும் அடைய முடியாது."
+  "expl.unreachable_all": "{scenario} சூழ்நிலையில் இந்தத் தொடக்கப் புள்ளியிலிருந்து பொருத்தமான எந்த வசதியையும் அடைய முடியாது.",
+  "state.not_built": "இன்னும் உருவாக்கப்படவில்லை",
+  "app.skeleton_notice": "முன்னோட்ட அமைப்பு: வடிவமைப்பு மட்டுமே, இன்னும் தரவு இல்லை.",
+  "page.data.gaps_title": "நிலையான தரவு இடைவெளிகள்",
+  "page.data.original_english": "ஆங்கில மூலம்",
+  "page.data.translation_status": "மொழிபெயர்ப்பு நிலை",
+  "page.data.assumptions_title": "நடைமுறையில் உள்ள அனுமானங்கள்",
+  "page.data.datasets_title": "தரவுத்தொகுப்புகள்",
+  "status.draft": "வரைவு (இன்னும் மதிப்பாய்வு செய்யப்படவில்லை)",
+  "status.reviewed": "மதிப்பாய்வு செய்யப்பட்டது",
+  "table.dataset": "தரவுத்தொகுப்பு",
+  "table.licence": "உரிமக் குறிப்பு",
+  "table.type": "வகை",
+  "table.parameter": "அளவுரு",
+  "table.value": "மதிப்பு",
+  "page.route.title": "வழித்தட ஆய்வு"
 }

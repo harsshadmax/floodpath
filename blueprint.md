@@ -10,6 +10,8 @@ Flood-Aware Ambulance and Maternal Facility Reachability: Prototype Engineering 
 
 **Time budget:** about 17.5 hours for the full core (phase times total 16.5 hours, plus about 1 hour for six preview checkpoints; PHASE 0 to PHASE 7 and PHASE 9 to PHASE 12), plus about 1.5 hours for the optional isolation view (PHASE 8). That is more than one working day. **One-day cut line:** build PHASE 0 to PHASE 7, a reduced PHASE 9, PHASE 10, and in PHASE 11 only cards C1 and C2, the Route explorer, and the Data and limits page; translate exactly the Section 6A.3 dictionary (it covers every string on those pages); skip PHASE 8; hold only three previews (after PHASE 3, PHASE 7 and PHASE 11); and record the demo in English with a short Tamil and Hindi switch. Everything cut is listed as planned work in the README.
 
+**Stack change (Version 3.0, user decision 2026-10-13):** the interface is now a **Next.js** app in `web/` (Next.js 16, React 19, TypeScript, Tailwind), replacing Streamlit. Python keeps all analysis and writes precomputed JSON and GeoJSON into `web/public/data/`; the web app only reads those files (no API server). Wherever this document says Streamlit, `st.*`, `ui_theme.py`, `ui_components.py`, `charts.py` or `app.py`, read the Next.js equivalent in Section 6.13. The visual style follows the dashboard reference image in a blue palette (Section 6.13). Rules that do not depend on the framework (data, honesty, i18n, metrics, tests T-01 to T-26) are unchanged.
+
 **Preview rule (Version 2.1):** after every second phase Claude Code must run the app, show the user a screenshot or live preview of the current UI/UX, say what is real and what is a placeholder, and wait for approval before continuing (Section 14.12).
 
 **How Claude Code must use this document:** every requirement is stated as a concrete, testable specification (WHAT / WHERE / WHY / INPUT / OUTPUT / DATA / ERRORS / TESTS where applicable), not as a code listing. Sections 5 to 15 are specification-only by design (Section 0.3). Build in the order of Section 14. Do not start PHASE N until PHASE N-1's verification passes and its commit is made. Where this document and a convenient shortcut disagree, follow this document or ask the user.
@@ -742,6 +744,25 @@ The colours below approximate the reference image by eye. They are not sampled v
 - Tamil and Hindi text may be 30 to 50 percent longer than English (assumption A-19): cards wrap text and never truncate the banner, notes, limits, KPI labels or button labels.
 - Keyboard order follows the visual order: banner, header, rail, KPI cards, cards.
 - Width 1280 px or more: layout of Section 6.4. Width 768 to 1279 px: two columns. Width under 768 px: one column (P2). A formal accessibility audit is `OUT`.
+
+### 6.13 Implementation in Next.js (Version 3.0)
+
+`SPECIFICATION COMPLETE`. This section overrides the Streamlit-specific details of Sections 4.13, 4.14, 6.2, 6.10 and 14 (PHASE 1, 10, 11).
+
+| Topic | Streamlit version (earlier text) | Next.js version (now) |
+|---|---|---|
+| Stack | Streamlit, Altair, Folium | Next.js 16 App Router, React 19, TypeScript, Tailwind 4. Map: Leaflet (added in PHASE 2). Charts: hand-built SVG components, no chart library |
+| Data flow | Python modules called by the app | Python writes JSON and GeoJSON to `web/public/data/` (one file set per scenario); `scripts/export_web_i18n.py` and `scripts/export_web_config.py` copy the dictionaries and assumptions into `web/src/` so Python stays the single source of truth. No API server |
+| Interactivity limit | Any origin could be computed live | The Route explorer works for the precomputed simulated starts and sample origins only; arbitrary map clicks and live threshold changes are not supported |
+| Files | `app.py`, `src/ui_theme.py`, `src/ui_components.py`, `src/charts.py` | `web/src/app/` (layout, page, `globals.css`), `web/src/components/` (`Dashboard.tsx`, `ui.tsx`, `icons.tsx`), `web/src/lib/i18n.ts` |
+| Language | Session state plus query parameter | The `lang` query parameter is the single source of truth; unsupported values fall back to English; the page sets `<html lang>` so CSS can disable letter-spacing for Tamil and Hindi |
+| HTML safety | `escape_html` before any custom HTML | React escapes text by default; `dangerouslySetInnerHTML` is forbidden (I18N-14) |
+| Fonts | System stack | Inter through `next/font` (downloaded once at build or dev time), with Noto Sans Tamil, Noto Sans Devanagari and Nirmala UI as fallbacks for Tamil and Hindi |
+| Tests | pytest with Streamlit's AppTest | pytest for Python and the sync tests (`tests/test_web_sync.py`); `tsc --noEmit`, `npm run lint` and `npm run build` for the web app; browser preview at each checkpoint |
+
+**Visual style (final, user request 2026-10-13).** Follow the reference dashboard image: a light-grey gradient page; large white cards (24 px radius) with soft raised shadows; a floating rounded icon rail with a round logo (the letter F) and a thin divider between icon groups; a large grey title; a read-only event pill with a calendar icon at the top right; pill toggles (dark-grey pills for the focus toggle, pale pills for language and scenario) whose selected state is blue; KPI cards with an uppercase label, a change line on the right and a trend area; and an equal 3 x 2 grid of cards. The accent is **blue** instead of the image's teal: accent `#1E64B4` (about 6:1 against white), dark `#174E8F`, soft `#E1ECF8`, deep `#0F3F77`; page `#E7E9EB` to `#F4F5F6`; dark pills and conventional-routing grey `#555B61`; title grey `#5C6166`. These colours override Section 6.10. Data colours stay separate from the accent so a flood layer never looks like a control: flood cyan-blue `#5BB5E0`, at-risk orange `#E08A1E`, blocked red `#C0392B`, improvement green `#1B7F5C` and deterioration red, each with an arrow, a signed number and a word. Font: Inter with Noto Sans Tamil, Noto Sans Devanagari and Nirmala UI as fallbacks. The colours approximate the image by eye (A-21). The reference website shpp3.vercel.app was reviewed, and its thin-border navy style was not adopted (user decision).
+
+**Status.** The PHASE 1 skeleton (rail, header, scenario, language and focus controls, banner, five KPI card frames, six card frames, Data and limits page) is built and checked in a browser in English, Tamil and Hindi. Nothing on the Overview or Route pages shows analysis results yet.
 
 ---
 
