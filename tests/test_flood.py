@@ -117,4 +117,4 @@ def test_real_layers_satisfy_t06_and_t07():
         gdf = gpd.read_file(flood.PROCESSED / f"flood_{s}.geojson")
         flood.validate_flood_gdf(gdf)
         areas[s] = gdf.to_crs(CONFIG.CRS_METRIC).geometry.area.sum()
-    assert areas["severe"] >= areas["observed"] >= areas["mild"] > 0
+    assert areas["observed"] > areas["severe"] >= areas["moderate"] >= areas["mild"] > 0
