@@ -62,6 +62,32 @@ export default function RouteExplorer({ scenario, lang }: { scenario: string; la
       .catch(() => undefined);
   }, [scenario, flood]);
 
+  const [auditError, setAuditError] = useState(false);
+  // Builds the file in the browser from audit.json (written by scripts/build_audit.py): the stored
+  // document for this scenario and start, plus the download time and the interface language.
+  const downloadAudit = async () => {
+    try {
+      const all = await getJson<Record<string, Record<string, Record<string, unknown>>>>("/data/audit.json");
+      const doc = { ...all[scenario][pointId], generated_at: new Date().toISOString(), ui_language: lang };
+      const url = URL.createObjectURL(new Blob([JSON.stringify(doc, null, 2)], { type: "application/json" }));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `floodpath_audit_${scenario}_${pointId}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setAuditError(false);
+    } catch {
+      setAuditError(true);
+    }
+  };
+  const auditButton = (
+    <div className="fp-audit">
+      <button type="button" className="fp-btn" onClick={downloadAudit}>{T("button.download_audit")}</button>
+      {auditError && <p className="fp-muted">{T("state.audit_missing")}</p>}
+      <p className="fp-muted">{T("route.audit_hint")}</p>
+    </div>
+  );
+
   const res = data && scenario !== "observed" ? data.scenarios[scenario]?.[pointId] : undefined;
   const point = data?.points.find((p) => p.id === pointId);
   const facName = (id: string | null) => data?.facilities.find((f) => f.id === id)?.name ?? "";
@@ -83,7 +109,13 @@ export default function RouteExplorer({ scenario, lang }: { scenario: string; la
 
   if (failed) return <div className="fp-placeholder">{T("state.routes_missing")}</div>;
   if (!data) return <div className="fp-placeholder">{T("map.loading")}</div>;
-  if (scenario === "observed") return <div className="fp-placeholder">{T("kpi.not_routed")}</div>;
+  if (scenario === "observed")
+    return (
+      <div>
+        <div className="fp-placeholder">{T("kpi.not_routed")}</div>
+        {auditButton}
+      </div>
+    );
 
   const diff = res && res.reachable && res.time_min !== null && res.baseline_time_min !== null ? res.time_min - res.baseline_time_min : null;
   const mins = (x: number | null) => (x === null ? "—" : T("route.minutes_value", { n: x.toFixed(1) }));
@@ -150,6 +182,7 @@ export default function RouteExplorer({ scenario, lang }: { scenario: string; la
                 ))}
               </ul>
             )}
+            {auditButton}
           </>
         )}
       </div>

@@ -144,5 +144,7 @@
   "route.legend_start": "आरंभ (सिम्युलेटेड)",
   "route.verification": "सत्यापन",
   "route.minutes_value": "{n} मिनट",
-  "state.routes_missing": "मार्ग फ़ाइल नहीं मिली। python scripts/build_routes.py चलाएँ।"
+  "state.routes_missing": "मार्ग फ़ाइल नहीं मिली। python scripts/build_routes.py चलाएँ।",
+  "state.audit_missing": "ऑडिट फ़ाइल नहीं मिली। python scripts/build_audit.py चलाएँ।",
+  "route.audit_hint": "यह लॉग चयन, लागू सभी धारणाएँ, डेटासेट, बाढ़ परत, सुविधाएँ, परिणाम, मेट्रिक्स और सीमाएँ सूचीबद्ध करता है। यह अंग्रेज़ी में JSON फ़ाइल है।"
 }

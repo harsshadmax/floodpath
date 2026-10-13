@@ -488,3 +488,9 @@ html[lang="hi"] .fp-caps {
 .fp-muted { color: var(--muted); font-size: 13px; margin: 0; }
 .fp-map-frame-tall { height: 520px; }
 .fp-legend-row { flex-direction: row; flex-wrap: wrap; gap: 8px 16px; margin-top: 10px; font-size: 12px; }
+
+/* ---------- audit download ---------- */
+.fp-audit { margin-top: 18px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.fp-btn { background: var(--blue); color: #fff; border: 0; border-radius: 99px; padding: 10px 20px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: var(--raised-small); }
+.fp-btn:hover { background: var(--blue-dark); }
+.fp-btn:focus-visible { outline: 3px solid var(--blue-soft); outline-offset: 2px; }

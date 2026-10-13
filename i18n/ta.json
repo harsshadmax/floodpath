@@ -144,5 +144,7 @@
   "route.legend_start": "தொடக்கம் (உருவகப்படுத்தப்பட்டது)",
   "route.verification": "சரிபார்ப்பு",
   "route.minutes_value": "{n} நிமிடம்",
-  "state.routes_missing": "வழித்தடக் கோப்பு கிடைக்கவில்லை. python scripts/build_routes.py ஐ இயக்கவும்."
+  "state.routes_missing": "வழித்தடக் கோப்பு கிடைக்கவில்லை. python scripts/build_routes.py ஐ இயக்கவும்.",
+  "state.audit_missing": "தணிக்கைக் கோப்பு கிடைக்கவில்லை. python scripts/build_audit.py ஐ இயக்கவும்.",
+  "route.audit_hint": "இந்தப் பதிவு தேர்வு, நடைமுறையிலுள்ள அனைத்து அனுமானங்கள், தரவுத்தொகுப்புகள், வெள்ள அடுக்கு, வசதிகள், முடிவு, அளவீடுகள் மற்றும் வரம்புகளைப் பட்டியலிடுகிறது. இது ஆங்கிலத்தில் உள்ள JSON கோப்பு."
 }

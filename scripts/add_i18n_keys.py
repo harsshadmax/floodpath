@@ -184,6 +184,16 @@ NEW = {
     "route.legend_start": ("Start (simulated)", "தொடக்கம் (உருவகப்படுத்தப்பட்டது)", "आरंभ (सिम्युलेटेड)"),
     "route.verification": ("Verification", "சரிபார்ப்பு", "सत्यापन"),
     "route.minutes_value": ("{n} min", "{n} நிமிடம்", "{n} मिनट"),
+    "state.audit_missing": (
+        "Audit file not found. Run python scripts/build_audit.py.",
+        "தணிக்கைக் கோப்பு கிடைக்கவில்லை. python scripts/build_audit.py ஐ இயக்கவும்.",
+        "ऑडिट फ़ाइल नहीं मिली। python scripts/build_audit.py चलाएँ।",
+    ),
+    "route.audit_hint": (
+        "The log lists the selection, every assumption in effect, datasets, flood layer, facilities, result, metrics and limits. It is a JSON file in English.",
+        "இந்தப் பதிவு தேர்வு, நடைமுறையிலுள்ள அனைத்து அனுமானங்கள், தரவுத்தொகுப்புகள், வெள்ள அடுக்கு, வசதிகள், முடிவு, அளவீடுகள் மற்றும் வரம்புகளைப் பட்டியலிடுகிறது. இது ஆங்கிலத்தில் உள்ள JSON கோப்பு.",
+        "यह लॉग चयन, लागू सभी धारणाएँ, डेटासेट, बाढ़ परत, सुविधाएँ, परिणाम, मेट्रिक्स और सीमाएँ सूचीबद्ध करता है। यह अंग्रेज़ी में JSON फ़ाइल है।",
+    ),
     "state.routes_missing": (
         "Route file not found. Run python scripts/build_routes.py.",
         "வழித்தடக் கோப்பு கிடைக்கவில்லை. python scripts/build_routes.py ஐ இயக்கவும்.",

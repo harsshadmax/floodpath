@@ -53,3 +53,10 @@ One entry per preview checkpoint (blueprint Section 14.12). Screenshots are take
 - **Not built:** audit log download, isolation card, Metrics table and Export pages. The observed composite is not routed on and says so.
 - **Notes:** the unreachable facilities appear both in the explanation and in the list below it (duplication is deliberate). The basemap's own red cross icons are OpenStreetMap hospital symbols, not this app's facilities (which are the blue and grey circles).
 - **User decision:** pending.
+
+## 2026-10-13: CP-6 (PHASE 9, audit log)
+- **Shown:** `docs/previews/cp6_route_audit_moderate_en.png`: the Route explorer with the Download audit log button and a one-line description (opened and checked).
+- **Real:** the button builds the file in the browser from `audit.json` (written by `scripts/build_audit.py`), adding `generated_at` and `ui_language`. I clicked it in the running page (Tamil, moderate, start A01) and read the generated file: all 12 required fields present, file name `floodpath_audit_moderate_A01.json`, 4 blocked edge IDs matching `n_blocked`, 4 standing gaps in the limits block. The browser's save dialog itself was not exercised (the click was intercepted to read the file).
+- **Contents:** selection (scenario, start, simulated label, service, include-unverified flag), every config value in effect, datasets with URL, licence, access date and kind, flood layer, facilities used and excluded, result, metrics, limits. The audit is language-neutral (English) apart from the `ui_language` field.
+- **Limits:** dataset access dates are the download date of the raw files; the `warnings` list is empty (no i18n-fallback tracking in the browser yet); the observed composite download has `result` and `metrics` set to null.
+- **User decision:** pending.

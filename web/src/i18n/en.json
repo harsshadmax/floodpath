@@ -144,5 +144,7 @@
   "route.legend_start": "Start (simulated)",
   "route.verification": "Verification",
   "route.minutes_value": "{n} min",
-  "state.routes_missing": "Route file not found. Run python scripts/build_routes.py."
+  "state.routes_missing": "Route file not found. Run python scripts/build_routes.py.",
+  "state.audit_missing": "Audit file not found. Run python scripts/build_audit.py.",
+  "route.audit_hint": "The log lists the selection, every assumption in effect, datasets, flood layer, facilities, result, metrics and limits. It is a JSON file in English."
 }

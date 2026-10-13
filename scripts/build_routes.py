@@ -69,6 +69,7 @@ def main() -> None:
                 "baseline_facility_id": r.baseline_facility_id,
                 "baseline_time_min": None if r.baseline_time_min is None else round(r.baseline_time_min, 2),
                 "baseline_drivable": r.baseline_drivable, "n_blocked": len(r.baseline_blocked_edges),
+                "blocked_edge_ids": r.baseline_blocked_edges,
                 "unreachable": r.unreachable_facilities,
             }
             per_point[p["id"]] = result | {
